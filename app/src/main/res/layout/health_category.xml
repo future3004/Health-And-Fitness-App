@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.AppCompatCheckedTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Vegan"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="140dp"
+        android:layout_height="180dp"
+        android:src="@mipmap/ic_launcher_round"
+        android:layout_marginLeft="28dp"/>
+
+</androidx.appcompat.widget.LinearLayoutCompat>
