@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -39,7 +40,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
-    private Button findRecipesBtn, getArrayBtn, getFruitsBtn;
+    private Button findRecipesBtn, getArrayBtn, getFruitsBtn, findGroceryStoresBtn;
     private SearchView searchView;
     private RecyclerView displayRecycleView;
 
@@ -48,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
     final int spanCount = 2; // 2 columns
     final int spacing = 25; // 25px for padding
 
+    private String API_KEY = "AIzaSyCq_l8CRNgCkyuSSkHMxBDv6f0x5AAHzik";
+    //String queryZ = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants%20in%20Sydney&key=AIzaSyCq_l8CRNgCkyuSSkHMxBDv6f0x5AAHzik"
+    // https://maps.googleapis.com/maps/api/place/textsearch/json?query=supermarket%20in%20Arlington&key=AIzaSyCq_l8CRNgCkyuSSkHMxBDv6f0x5AAHzik
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,10 +62,13 @@ public class MainActivity extends AppCompatActivity {
         findRecipesBtn = findViewById(R.id.get_recipe_btn);
         getArrayBtn = findViewById(R.id.search_btn);
         getFruitsBtn = findViewById(R.id.get_fruits_btn);
+        findGroceryStoresBtn = findViewById(R.id.get_stores_btn);
         displayRecycleView = findViewById(R.id.display_results_recyclerView);
 
         // api provider
         final EdamamApiService apiService = new EdamamApiService(MainActivity.this);
+
+        findGroceryStoresBtn.setOnClickListener(view -> {startActivity(new Intent(MainActivity.this, GroceryStoresActivity.class));});
 
         getFruitsBtn.setOnClickListener(new View.OnClickListener() {
             @Override

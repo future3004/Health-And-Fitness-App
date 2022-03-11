@@ -4,11 +4,13 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/richa/AndroidStudioProjects/HealthAndFitnessApp/app/src/main/res/drawable/baseline_whatshot_18.xml" value="0.2171875" />
+        <entry key="..\:/Users/richa/AndroidStudioProjects/HealthAndFitnessApp/app/src/main/res/layout/activity_grocery_stores.xml" value="0.22554347826086957" />
         <entry key="..\:/Users/richa/AndroidStudioProjects/HealthAndFitnessApp/app/src/main/res/layout/activity_main.xml" value="0.3625" />
         <entry key="..\:/Users/richa/AndroidStudioProjects/HealthAndFitnessApp/app/src/main/res/layout/activity_search_result.xml" value="0.22871376811594202" />
         <entry key="..\:/Users/richa/AndroidStudioProjects/HealthAndFitnessApp/app/src/main/res/layout/cooking_list_item.xml" value="0.22871376811594202" />
         <entry key="..\:/Users/richa/AndroidStudioProjects/HealthAndFitnessApp/app/src/main/res/layout/health_category.xml" value="0.22871376811594202" />
         <entry key="..\:/Users/richa/AndroidStudioProjects/HealthAndFitnessApp/app/src/main/res/layout/search_result_item.xml" value="0.22871376811594202" />
+        <entry key="..\:/Users/richa/AndroidStudioProjects/HealthAndFitnessApp/app/src/main/res/layout/store_list_row.xml" value="0.3625" />
       </map>
     </option>
   </component>
