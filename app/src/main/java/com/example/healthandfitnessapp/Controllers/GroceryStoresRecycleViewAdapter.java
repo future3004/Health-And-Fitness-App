@@ -1,5 +1,6 @@
 package com.example.healthandfitnessapp.Controllers;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +16,12 @@ import java.util.List;
 
 public class GroceryStoresRecycleViewAdapter extends RecyclerView.Adapter<GroceryStoresRecycleViewAdapter.MyViewHolder> {
 
-    private List<PlacesPOJO.CustomA> stLstStores;
+    //private List<PlacesPOJO.CustomA> stLstStores;
+    Context context;
     private List<StoreModel> models;
 
-    public GroceryStoresRecycleViewAdapter(List<PlacesPOJO.CustomA> stores, List<StoreModel> storeModels) {
-        this.stLstStores = stores;
+    public GroceryStoresRecycleViewAdapter(Context context, List<StoreModel> storeModels) {
+        this.context = context;
         this.models = storeModels;
     }
 
@@ -34,13 +36,15 @@ public class GroceryStoresRecycleViewAdapter extends RecyclerView.Adapter<Grocer
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        holder.setData(stLstStores.get(holder.getAdapterPosition()), holder, models.get(holder.getAdapterPosition()));
+       // holder.setData(stLstStores.get(holder.getAdapterPosition()), holder, models.get(holder.getAdapterPosition()));
 
     }
 
     @Override
     public int getItemCount() {
-        return Math.min(5, stLstStores.size());
+        int items = 0;
+        if (models != null)  items = models.size();
+        return items;
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -49,28 +53,17 @@ public class GroceryStoresRecycleViewAdapter extends RecyclerView.Adapter<Grocer
         private TextView txtStoreName;
         private TextView txtStoreAddr;
         private TextView txtStoreDist;
-        private StoreModel model;
 
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            this.txtStoreDist = (TextView) itemView.findViewById(R.id.txtStoreDist);
-            this.txtStoreName = (TextView) itemView.findViewById(R.id.txtStoreName);
-            this.txtStoreAddr = (TextView) itemView.findViewById(R.id.txtStoreAddr);
+            this.txtStoreDist = itemView.findViewById(R.id.txtStoreDist);
+            this.txtStoreName = itemView.findViewById(R.id.txtStoreName);
+            this.txtStoreAddr = itemView.findViewById(R.id.txtStoreAddr);
 
         }
 
-
-        public void setData(PlacesPOJO.CustomA info, MyViewHolder holder, StoreModel storeModel) {
-
-            this.model = storeModel;
-            holder.txtStoreDist.setText(model.distance + "\n" + model.duration);
-            holder.txtStoreName.setText(info.name);
-            holder.txtStoreAddr.setText(info.vicinity);
-
-
-        }
 
     }
 }

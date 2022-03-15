@@ -24,11 +24,17 @@
         android:layout_alignParentEnd="true"
         android:text="Search" />
 
+    <TextView
+        android:id="@+id/show_user_loc"
+        android:layout_below="@+id/editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/nearby_stores_recycleView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/editText"
+        android:layout_below="@+id/show_user_loc"
         android:scrollbars="vertical"/>
 
 </RelativeLayout>

@@ -3,59 +3,67 @@ package com.example.healthandfitnessapp;
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.healthandfitnessapp.Controllers.APIClient;
-import com.example.healthandfitnessapp.Controllers.ApiInterface;
-import com.example.healthandfitnessapp.Controllers.GroceryStoresRecycleViewAdapter;
-import com.example.healthandfitnessapp.Controllers.PlacesPOJO;
-import com.example.healthandfitnessapp.Controllers.ResultDistanceMatrix;
-import com.example.healthandfitnessapp.Models.StoreModel;
-import com.google.android.gms.maps.model.LatLng;
 
+import com.example.healthandfitnessapp.Models.StoreModel;
+
+import android.location.LocationListener;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-import io.nlopez.smartlocation.OnLocationUpdatedListener;
-import io.nlopez.smartlocation.SmartLocation;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
-public class GroceryStoresActivity extends AppCompatActivity {
+public class GroceryStoresActivity extends AppCompatActivity implements LocationListener {
 
-    private ArrayList<String> permissionsToRequest;
-    private ArrayList<String> permissionsRejected = new ArrayList<>();
-    private ArrayList<String> permissions = new ArrayList<>();
-    private final static int ALL_PERMISSIONS_RESULT = 101;
-    List<StoreModel> storeModels;
-    ApiInterface apiService;
+    private List<StoreModel> storeModels;
 
-    String latLngString;
-    LatLng latLng;
+    private String latitude, longitude;
 
     private EditText editText;
     private Button searchBtn;
+    private TextView textView;
     private RecyclerView recyclerView;
 
-    private List<PlacesPOJO.CustomA> results;
+    private LocationManager locationManager;
+
+    private String address, city, state, country, postalCode, knownName;
+
 
     // https://developers.google.com/maps/documentation/places/web-service/search-text#maps_http_places_textsearch-java
+
+    // get grocery store url
     // https://maps.googleapis.com/maps/api/place/textsearch/json?query=supermarket%20in%20Arlington&key=AIzaSyCq_l8CRNgCkyuSSkHMxBDv6f0x5AAHzik
+
+    // get photo url
+    // https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=Aap_uEA7vb0DDYVJWEaX3O-AtYp77AaswQKSGtDaimt3gt7QCNpdjp1BkdM6acJ96xTec3tsV_ZJNL_JP-lqsVxydG3nh739RE_hepOOL05tfJh2_ranjMadb3VoBYFvF0ma6S24qZ6QJUuV6sSRrhCskSBP5C1myCzsebztMfGvm7ij3gZT&key=AIzaSyCq_l8CRNgCkyuSSkHMxBDv6f0x5AAHzik
+    // https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=Aap_uEBCVTTIZ0bv3jTNtcllYaEmkCdFPVEivuEV6mbHihUv3N_UMSb6C7c9_pis679kb66S_gNmg4A0QxNiaybL3bgLwTqG9wmWyFmjKm-VJiiGi-22BBV6Wtch9dBfdAyKtzvu7FRKbFxrkkaSitVR1ynvKC-wjh-6O_7uvnjPlNRVee2A&key=AIzaSyCq_l8CRNgCkyuSSkHMxBDv6f0x5AAHzik
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,27 +71,20 @@ public class GroceryStoresActivity extends AppCompatActivity {
         setContentView(R.layout.activity_grocery_stores);
         editText = findViewById(R.id.editText);
         searchBtn = findViewById(R.id.search_button);
+        textView = findViewById(R.id.show_user_loc);
         recyclerView = findViewById(R.id.nearby_stores_recycleView);
 
-        permissions.add(ACCESS_FINE_LOCATION);
-        permissions.add(ACCESS_COARSE_LOCATION);
 
-        permissionsToRequest = findUnAskedPermissions(permissions);
+        // ask for user to use their location
+        if (ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-
-
-            if (permissionsToRequest.size() > 0)
-                requestPermissions(permissionsToRequest.toArray(new String[permissionsToRequest.size()]), ALL_PERMISSIONS_RESULT);
-            else {
-                fetchLocation();
-            }
-        } else {
-            fetchLocation();
+            ActivityCompat.requestPermissions(GroceryStoresActivity.this, new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION
+            }, 100);
         }
 
-        apiService = APIClient.getClient().create(ApiInterface.class);
 
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setHasFixedSize(true);
@@ -91,200 +92,57 @@ public class GroceryStoresActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
+
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String s = editText.getText().toString().trim();
-                String[] split = s.split("\\s+");
+                //String s = editText.getText().toString().trim();
+                //String[] split = s.split("\\s+");
+
+                getLocation();
+
+                //Toast.makeText(getApplicationContext(), "Your Location: " + "\n" + "Latitude: " + latitude + "\n" + "Longitude: " + longitude, Toast.LENGTH_LONG).show();
 
 
-                if (split.length != 2) {
-                    Toast.makeText(getApplicationContext(), "Please enter text in the required format", Toast.LENGTH_SHORT).show();
-                } else
-                    fetchStores(split[0], split[1]);
             }
         });
 
     }
 
-    // Example: restaurant dominos or cafe vegetarian
-    private void fetchStores(String placeType, String businessName) {
+    @SuppressLint("MissingPermission")
+    private void getLocation() {
 
-        Call<PlacesPOJO.Root> call = apiService.doPlaces(placeType, latLngString,"\""+ businessName +"\"", true, "distance", APIClient.GOOGLE_PLACE_API_KEY);
+        try {
+            locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, GroceryStoresActivity.this);
 
-        //Call<PlacesPOJO.Root> call = apiService.doPlaces(placeType, latLngString, businessName, true, "distance", APIClient.GOOGLE_PLACE_API_KEY);
-        call.enqueue(new Callback<PlacesPOJO.Root>() {
-            @Override
-            public void onResponse(Call<PlacesPOJO.Root> call, Response<PlacesPOJO.Root> response) {
-                PlacesPOJO.Root root = response.body();
-
-
-                if (response.isSuccessful()) {
-
-                    if (root.status.equals("OK")) {
-
-                        results = root.customA;
-                        storeModels = new ArrayList<>();
-                        for (int i = 0; i < results.size(); i++) {
-
-                            if (i == 10)
-                                break;
-                            PlacesPOJO.CustomA info = results.get(i);
-
-
-                            fetchDistance(info);
-
-                        }
-
-                    } else {
-                        Toast.makeText(getApplicationContext(), "No matches found near you", Toast.LENGTH_SHORT).show();
-                    }
-
-                } else if (response.code() != 200) {
-                    Toast.makeText(getApplicationContext(), "Error " + response.code() + " found.", Toast.LENGTH_SHORT).show();
-                }
-
-
-            }
-
-            @Override
-            public void onFailure(Call<PlacesPOJO.Root> call, Throwable t) {
-                // Log error here since request failed
-                call.cancel();
-            }
-        });
-
-
-    }
-
-    private ArrayList<String> findUnAskedPermissions(ArrayList<String> wanted) {
-        ArrayList<String> result = new ArrayList<>();
-
-        for (String perm : wanted) {
-            if (!hasPermission(perm)) {
-                result.add(perm);
-            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
-        return result;
-    }
-
-    private boolean hasPermission(String permission) {
-        if (canMakeSmores()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                return (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED);
-            }
-        }
-        return true;
-    }
-
-    private boolean canMakeSmores() {
-        return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
     }
 
 
-    @TargetApi(Build.VERSION_CODES.M)
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    public void onLocationChanged(@NonNull Location location) {
+        Log.i("User curr location: ", "Your Location: " + "\n" + "Latitude: " + location.getLatitude() + "\n" + "Longitude: " + location.getLongitude() );
+        Toast.makeText(this, "Lat: "+location.getLatitude()+"  Longi: "+location.getLongitude(), Toast.LENGTH_LONG).show();
+        latitude = String.valueOf(location.getLatitude());
+        longitude = String.valueOf(location.getLongitude());
+        try {
+            Geocoder geocoder = new Geocoder(GroceryStoresActivity.this, Locale.getDefault());
+            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
+            address = addresses.get(0).getAddressLine(0);
+            city = addresses.get(0).getLocality();
+            state = addresses.get(0).getAdminArea();
+            country = addresses.get(0).getCountryName();
+            postalCode = addresses.get(0).getPostalCode();
+            knownName = addresses.get(0).getFeatureName();
 
-        switch (requestCode) {
+            textView.setText(address + "\nCity: " + city+ "\nState: " + state);
 
-            case ALL_PERMISSIONS_RESULT:
-                for (String perms : permissionsToRequest) {
-                    if (!hasPermission(perms)) {
-                        permissionsRejected.add(perms);
-                    }
-                }
-
-                if (permissionsRejected.size() > 0) {
-
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        if (shouldShowRequestPermissionRationale(permissionsRejected.get(0))) {
-                            showMessageOKCancel("These permissions are mandatory for the application. Please allow access.",
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                requestPermissions(permissionsRejected.toArray(new String[permissionsRejected.size()]), ALL_PERMISSIONS_RESULT);
-                                            }
-                                        }
-                                    });
-                            return;
-                        }
-                    }
-
-                } else {
-                    fetchLocation();
-                }
-
-                break;
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
     }
-
-    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
-        new AlertDialog.Builder(GroceryStoresActivity.this)
-                .setMessage(message)
-                .setPositiveButton("OK", okListener)
-                .setNegativeButton("Cancel", null)
-                .create()
-                .show();
-    }
-
-    private void fetchLocation() {
-
-        SmartLocation.with(this).location()
-                .oneFix()
-                .start(new OnLocationUpdatedListener() {
-                    @Override
-                    public void onLocationUpdated(Location location) {
-                        latLngString = location.getLatitude() + "," + location.getLongitude();
-                        latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                    }
-                });
-    }
-
-    private void fetchDistance(final PlacesPOJO.CustomA info) {
-
-        Call<ResultDistanceMatrix> call = apiService.getDistance(APIClient.GOOGLE_PLACE_API_KEY, latLngString, info.geometry.locationA.lat + "," + info.geometry.locationA.lng);
-        call.enqueue(new Callback<ResultDistanceMatrix>() {
-            @Override
-            public void onResponse(Call<ResultDistanceMatrix> call, Response<ResultDistanceMatrix> response) {
-
-                ResultDistanceMatrix resultDistance = response.body();
-                if ("OK".equalsIgnoreCase(resultDistance.status)) {
-
-                    ResultDistanceMatrix.InfoDistanceMatrix infoDistanceMatrix = resultDistance.rows.get(0);
-                    ResultDistanceMatrix.InfoDistanceMatrix.DistanceElement distanceElement = (ResultDistanceMatrix.InfoDistanceMatrix.DistanceElement) infoDistanceMatrix.elements.get(0);
-                    if ("OK".equalsIgnoreCase(distanceElement.status)) {
-                        ResultDistanceMatrix.InfoDistanceMatrix.ValueItem itemDuration = distanceElement.duration;
-                        ResultDistanceMatrix.InfoDistanceMatrix.ValueItem itemDistance = distanceElement.distance;
-                        String totalDistance = String.valueOf(itemDistance.text);
-                        String totalDuration = String.valueOf(itemDuration.text);
-
-                        storeModels.add(new StoreModel(info.name, info.vicinity, totalDistance, totalDuration));
-
-
-                        if (storeModels.size() == 10 || storeModels.size() == results.size()) {
-                            GroceryStoresRecycleViewAdapter adapterStores = new GroceryStoresRecycleViewAdapter(results, storeModels);
-                            recyclerView.setAdapter(adapterStores);
-                        }
-
-                    }
-
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<ResultDistanceMatrix> call, Throwable t) {
-                call.cancel();
-            }
-        });
-
-    }
-
-
 }

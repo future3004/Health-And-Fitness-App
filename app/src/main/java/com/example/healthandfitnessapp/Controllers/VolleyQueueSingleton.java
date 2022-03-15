@@ -7,9 +7,10 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
 public class VolleyQueueSingleton {
+
     private static VolleyQueueSingleton instance;
     private RequestQueue requestQueue;
-    private static Context ctx;
+    private Context ctx;
 
     private VolleyQueueSingleton(Context context) {
         ctx = context;
