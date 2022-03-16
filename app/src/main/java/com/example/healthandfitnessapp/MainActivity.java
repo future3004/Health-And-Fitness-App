@@ -2,7 +2,6 @@ package com.example.healthandfitnessapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -11,33 +10,18 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import com.android.volley.Cache;
-import com.android.volley.Network;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.BasicNetwork;
-import com.android.volley.toolbox.DiskBasedCache;
-import com.android.volley.toolbox.HurlStack;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.healthandfitnessapp.Controllers.DisplayResultsAdapter;
-import com.example.healthandfitnessapp.Controllers.VolleyQueueSingleton;
 import com.example.healthandfitnessapp.Models.RecipeModel;
 import com.example.healthandfitnessapp.Models.SearchResultModel;
-import com.example.healthandfitnessapp.Util.AutoFitGridLayoutManager;
-import com.example.healthandfitnessapp.Util.EdamamApiService;
+import com.example.healthandfitnessapp.API.EdamamApiService;
 import com.example.healthandfitnessapp.Util.GridSpacingItemDecoration;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     private Button findRecipesBtn, getArrayBtn, getFruitsBtn, findGroceryStoresBtn;
@@ -48,10 +32,6 @@ public class MainActivity extends AppCompatActivity {
     private DisplayResultsAdapter resultsAdapter;
     final int spanCount = 2; // 2 columns
     final int spacing = 25; // 25px for padding
-
-    private String API_KEY = "AIzaSyCq_l8CRNgCkyuSSkHMxBDv6f0x5AAHzik";
-    //String queryZ = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants%20in%20Sydney&key=AIzaSyCq_l8CRNgCkyuSSkHMxBDv6f0x5AAHzik"
-    // https://maps.googleapis.com/maps/api/place/textsearch/json?query=supermarket%20in%20Arlington&key=AIzaSyCq_l8CRNgCkyuSSkHMxBDv6f0x5AAHzik
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

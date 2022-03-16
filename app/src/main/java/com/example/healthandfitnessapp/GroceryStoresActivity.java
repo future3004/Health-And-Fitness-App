@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,6 +18,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -30,6 +33,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.example.healthandfitnessapp.API.GooglePlacesAPI;
+import com.example.healthandfitnessapp.Controllers.GroceryStoresRecycleViewAdapter;
 import com.example.healthandfitnessapp.Models.StoreModel;
 
 import android.location.LocationListener;
@@ -42,7 +47,8 @@ import java.util.Locale;
 
 public class GroceryStoresActivity extends AppCompatActivity implements LocationListener {
 
-    private List<StoreModel> storeModels;
+    private List<StoreModel> groceryStoresList = null;
+    private GroceryStoresRecycleViewAdapter adapter;
 
     private String latitude, longitude;
 
@@ -71,9 +77,11 @@ public class GroceryStoresActivity extends AppCompatActivity implements Location
         setContentView(R.layout.activity_grocery_stores);
         editText = findViewById(R.id.editText);
         searchBtn = findViewById(R.id.search_button);
-        textView = findViewById(R.id.show_user_loc);
+        textView = findViewById(R.id.show_user_info);
         recyclerView = findViewById(R.id.nearby_stores_recycleView);
 
+        // places api provider
+        final GooglePlacesAPI googlePlacesAPI = new GooglePlacesAPI(GroceryStoresActivity.this);
 
         // ask for user to use their location
         if (ActivityCompat.checkSelfPermission(
@@ -86,24 +94,75 @@ public class GroceryStoresActivity extends AppCompatActivity implements Location
         }
 
 
-        recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setHasFixedSize(true);
+/*        groceryStoresList = new ArrayList<>();
+        groceryStoresList.add(new StoreModel("google", "Walmart", "4.4",
+                "8550 Tom Landry Fwy", "Open"));
+        groceryStoresList.add(new StoreModel("google", "ALDI", "4.9",
+                "8550 Tom Landry Fwy", "Open"));
+        groceryStoresList.add(new StoreModel("google", "Target Grocery", "4.2",
+                "8550 Tom Landry Fwy", "Closed"));
+        groceryStoresList.add(new StoreModel("google", "Costco", "5",
+                "8550 Tom Landry Fwy", "Open"));
+        groceryStoresList.add(new StoreModel("google", "Wincos", "4.8",
+                "8550 Tom Landry Fwy", "Closed"));
+                */
+        // initial ui load
+        //Toast.makeText(getApplicationContext(), "Grocery stores in " + userCity, Toast.LENGTH_SHORT).show();
+        String city = "Arlington";
+        googlePlacesAPI.fetchGroceryStores(city.toLowerCase(), new GooglePlacesAPI.FetchGroceryStoreCallback() {
+            @Override
+            public void onResponse(List<StoreModel> storeModelList) {
+
+                groceryStoresList = storeModelList;
+
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(getApplicationContext(), "Error: " + message, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        adapter = new GroceryStoresRecycleViewAdapter(GroceryStoresActivity.this, groceryStoresList);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
+
+        // adding a divider/separator between each store
+        DividerItemDecoration horizontalDecoration = new DividerItemDecoration(this,
+                DividerItemDecoration.VERTICAL);
+        Drawable horizontalDivider = ContextCompat.getDrawable(this, R.drawable.horizontal_divider);
+        assert horizontalDivider != null;
+        horizontalDecoration.setDrawable(horizontalDivider);
+        recyclerView.addItemDecoration(horizontalDecoration);
 
 
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //String s = editText.getText().toString().trim();
+                String userCity = editText.getText().toString().trim();
                 //String[] split = s.split("\\s+");
 
+                // getting current user location
                 getLocation();
 
-                //Toast.makeText(getApplicationContext(), "Your Location: " + "\n" + "Latitude: " + latitude + "\n" + "Longitude: " + longitude, Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), "Grocery stores in " + userCity, Toast.LENGTH_SHORT).show();
+                googlePlacesAPI.fetchGroceryStores(userCity.toLowerCase(), new GooglePlacesAPI.FetchGroceryStoreCallback() {
+                    @Override
+                    public void onResponse(List<StoreModel> storeModelList) {
 
+                        // update the adapter with new stores
+                        adapter.setItems(storeModelList);
+                        adapter.notifyDataSetChanged();
+                        //recyclerView.notify();
+                    }
 
+                    @Override
+                    public void onError(String message) {
+                        Toast.makeText(getApplicationContext(), "Error: " + message, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
 
@@ -126,7 +185,7 @@ public class GroceryStoresActivity extends AppCompatActivity implements Location
     @Override
     public void onLocationChanged(@NonNull Location location) {
         Log.i("User curr location: ", "Your Location: " + "\n" + "Latitude: " + location.getLatitude() + "\n" + "Longitude: " + location.getLongitude() );
-        Toast.makeText(this, "Lat: "+location.getLatitude()+"  Longi: "+location.getLongitude(), Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Lat: "+location.getLatitude()+"  Longi: "+location.getLongitude(), Toast.LENGTH_LONG).show();
         latitude = String.valueOf(location.getLatitude());
         longitude = String.valueOf(location.getLongitude());
         try {
@@ -139,10 +198,25 @@ public class GroceryStoresActivity extends AppCompatActivity implements Location
             postalCode = addresses.get(0).getPostalCode();
             knownName = addresses.get(0).getFeatureName();
 
-            textView.setText(address + "\nCity: " + city+ "\nState: " + state);
+            //textView.setText("city: " + city+ "state: " + state);
+
 
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // getting current user location
+        getLocation();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // getting current user location
+        getLocation();
     }
 }

@@ -1,4 +1,4 @@
-package com.example.healthandfitnessapp.Util;
+package com.example.healthandfitnessapp.API;
 
 import android.content.Context;
 import android.util.Log;
