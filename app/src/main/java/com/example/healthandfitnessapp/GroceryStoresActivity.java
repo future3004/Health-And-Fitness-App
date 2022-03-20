@@ -93,6 +93,8 @@ public class GroceryStoresActivity extends AppCompatActivity implements Location
             }, 100);
         }
 
+        // get user location
+        getLocation();
 
 /*        groceryStoresList = new ArrayList<>();
         groceryStoresList.add(new StoreModel("google", "Walmart", "4.4",
@@ -109,22 +111,8 @@ public class GroceryStoresActivity extends AppCompatActivity implements Location
         // initial ui load
         //Toast.makeText(getApplicationContext(), "Grocery stores in " + userCity, Toast.LENGTH_SHORT).show();
         String city = "Arlington";
-        googlePlacesAPI.fetchGroceryStores(city.toLowerCase(), new GooglePlacesAPI.FetchGroceryStoreCallback() {
-            @Override
-            public void onResponse(List<StoreModel> storeModelList) {
-
-                groceryStoresList = storeModelList;
-
-            }
-
-            @Override
-            public void onError(String message) {
-                Toast.makeText(getApplicationContext(), "Error: " + message, Toast.LENGTH_SHORT).show();
-            }
-        });
 
         adapter = new GroceryStoresRecycleViewAdapter(GroceryStoresActivity.this, groceryStoresList);
-
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
@@ -145,12 +133,13 @@ public class GroceryStoresActivity extends AppCompatActivity implements Location
                 //String[] split = s.split("\\s+");
 
                 // getting current user location
-                getLocation();
+                // getLocation();
 
                 //Toast.makeText(getApplicationContext(), "Grocery stores in " + userCity, Toast.LENGTH_SHORT).show();
                 googlePlacesAPI.fetchGroceryStores(userCity.toLowerCase(), new GooglePlacesAPI.FetchGroceryStoreCallback() {
                     @Override
                     public void onResponse(List<StoreModel> storeModelList) {
+                        groceryStoresList = storeModelList;
 
                         // update the adapter with new stores
                         adapter.setItems(storeModelList);

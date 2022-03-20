@@ -40,6 +40,8 @@ public class GooglePlacesAPI {
         String PLACE_API_URL = "https://maps.googleapis.com/maps/api/place/textsearch/json?query="+ whatQuery + "%20in%20"
                 + desiredCity + "&key="+ API_KEY;
 
+        //final String[] photo_ref = {"Aap_uECqZiCinEDIPnh1tlbvju3OjqbLU9KaNRTABOLJrMJyROk0aR96nBXmVbdw1tSvFOadd8HUZoSRS-9Sers0KPa8qDC8xs2n2JUn_bzL3WbWcxbGwoRtaZDukne_qYJ33Got-hsQiZGwrKBrrJ4UNZbi_ymk2TItWTfIoYXUT7mTQaWP"};
+
         List<StoreModel> storesList = new ArrayList<>();
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
@@ -52,16 +54,24 @@ public class GooglePlacesAPI {
                     // get the array with recipe info
                     JSONArray jsonArray = response.getJSONArray("results");
 
-                    //StoreModel storeModel = new StoreModel();
 
                     for(int i=0; i < jsonArray.length(); i++) {
+
+                        StoreModel storeModel = new StoreModel();
                         JSONObject store = jsonArray.getJSONObject(i);
 
-                        JSONArray photosArray = store.getJSONArray("photos");
-                        storesList.add(new StoreModel(photosArray.getJSONObject(0).getString("photo_reference"),
-                                store.getString("name"), store.getString("rating"),
-                                store.getString("formatted_address"),
-                                store.getJSONObject("opening_hours").getBoolean("open_now")));
+                        //Log.i("Photo ref_google-api: ", store.getJSONArray("photos").getJSONObject(0).getString("photo_reference"));
+
+                        //String photo_ref = store.getJSONArray("photos").getJSONObject(0).getString("photo_reference");
+                        //storeModel.setPhotoReference(photo_ref);
+
+                        storeModel.setPhotoReference("Aap_uECqZiCinEDIPnh1tlbvju3OjqbLU9KaNRTABOLJrMJyROk0aR96nBXmVbdw1tSvFOadd8HUZoSRS-9Sers0KPa8qDC8xs2n2JUn_bzL3WbWcxbGwoRtaZDukne_qYJ33Got-hsQiZGwrKBrrJ4UNZbi_ymk2TItWTfIoYXUT7mTQaWP");
+                        storeModel.setStoreName(store.getString("name"));
+                        storeModel.setStoreRating(store.getString("rating"));
+                        storeModel.setStoreAddress(store.getString("formatted_address"));
+                        storeModel.setStoreOpenClose(store.getJSONObject("opening_hours").getBoolean("open_now"));
+
+                        storesList.add(storeModel);
                     }
 
 /*                    JSONObject store = jsonArray.getJSONObject(0);
@@ -72,9 +82,8 @@ public class GooglePlacesAPI {
                     storeModel.setStoreRating(store.getString("rating"));
                     storeModel.setStoreAddress(store.getString("formatted_address"));
                     storeModel.setStoreOpenClose(store.getJSONObject("opening_hours").getBoolean("open_now"));*/
-                    Log.i("Places_API_test", storesList.get(0).toString());
+                    //Log.i("Places_API_test", storesList.get(0).toString());
                     //storesList.add(storeModel);
-
 
 
                     callback.onResponse(storesList);
