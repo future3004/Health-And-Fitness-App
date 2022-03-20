@@ -171,6 +171,6 @@ public class RecipeModel {
                 ", totalTime=" + totalTime +
                 ", recipeCal=" + recipeCal +
                 ", viewOnWebUrl='" + viewOnWebUrl + '\'' +
-                '}';
+                '}' + '\n';
     }
 }

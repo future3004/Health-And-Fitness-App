@@ -42,7 +42,9 @@ public class GooglePlacesAPI {
 
         List<StoreModel> storesList = new ArrayList<>();
 
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, PLACE_API_URL, null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
+                PLACE_API_URL,
+                null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
 
@@ -50,24 +52,29 @@ public class GooglePlacesAPI {
                     // get the array with recipe info
                     JSONArray jsonArray = response.getJSONArray("results");
 
-                    //ArrayList<JSONObject>
+                    //StoreModel storeModel = new StoreModel();
 
-                    // create store model to store results
-                    StoreModel storeModel = new StoreModel();
+                    for(int i=0; i < jsonArray.length(); i++) {
+                        JSONObject store = jsonArray.getJSONObject(i);
 
+                        JSONArray photosArray = store.getJSONArray("photos");
+                        storesList.add(new StoreModel(photosArray.getJSONObject(0).getString("photo_reference"),
+                                store.getString("name"), store.getString("rating"),
+                                store.getString("formatted_address"),
+                                store.getJSONObject("opening_hours").getBoolean("open_now")));
+                    }
 
-                    JSONObject store = jsonArray.getJSONObject(0);
+/*                    JSONObject store = jsonArray.getJSONObject(0);
 
                     JSONArray photosArray = store.getJSONArray("photos");
                     storeModel.setPhotoReference(photosArray.getJSONObject(0).getString("photo_reference"));
                     storeModel.setStoreName(store.getString("name"));
                     storeModel.setStoreRating(store.getString("rating"));
                     storeModel.setStoreAddress(store.getString("formatted_address"));
-                    storeModel.setStoreOpenClose(store.getJSONObject("opening_hours").getBoolean("open_now"));
-                    //Log.i("Places_API_test", photosArray.getJSONObject(0).getString("photo_reference"));
+                    storeModel.setStoreOpenClose(store.getJSONObject("opening_hours").getBoolean("open_now"));*/
+                    Log.i("Places_API_test", storesList.get(0).toString());
+                    //storesList.add(storeModel);
 
-
-                    storesList.add(storeModel);
 
 
                     callback.onResponse(storesList);

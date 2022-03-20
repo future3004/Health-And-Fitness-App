@@ -26,100 +26,59 @@ public class EdamamApiService {
     int from = 0;
     int to = 9;
 
-    String imgAPI;
-    String recipe;
-    String sourceLink;
-    String label = "";
-
     public EdamamApiService(Context context) {
         this.context = context;
     }
 
-    public interface ApiCallback {
-        void onError(String message);
-
-        void onResponse(JSONObject response);
-    }
-
-    public void getQueryObject(String userQuery, ApiCallback callback) {
-        String searchURL = EDAMAM_API + userQuery;
-        //Toast.makeText(MainActivity.this, "Searching..." + userQuery, Toast.LENGTH_SHORT).show();
-
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, searchURL, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Log.i("Edamam data: ", response.toString());
-                callback.onResponse(response);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                callback.onError(error.toString());
-            }
-        });
-
-        // Add a request (in this example, called stringRequest) to your RequestQueue.
-        VolleyQueueSingleton.getInstance(context).addToRequestQueue(request);
-    }
-
     // interface callback for data return
     public interface GetRecipeCallback {
-        void onResponse(ArrayList<RecipeModel> recipe);
+        void onResponse(List<RecipeModel> recipe);
 
         void onError(String message);
     }
 
     public void getRecipeInfo(String userQuery, GetRecipeCallback callback) {
-        ArrayList<RecipeModel> recipesArray = new ArrayList<>();
+        List<RecipeModel> recipesArray = new ArrayList<>();
 
         String searchURL = EDAMAM_API + userQuery;
         //Toast.makeText(MainActivity.this, "Searching..." + userQuery, Toast.LENGTH_SHORT).show();
-
-        if (userQuery.matches("paleo")) {
-            label = "Bone Broth From Nom Nom Paleo";
-        }
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, searchURL, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
 
                 try {
+                    String query = response.getString("q");
                     // get the array with recipe info
                     JSONArray hits_array = response.getJSONArray("hits");
 
-                    //ArrayList<JSONObject>
+                    // get the individual recipes and save to recipesArray list
+                    for (int i=0; i < hits_array.length(); i++) {
 
-                    // get the first item in array
-                    RecipeModel recipeModel = new RecipeModel();
+                        RecipeModel recipeModel = new RecipeModel();
+                        JSONObject currentRecipeObject = hits_array.getJSONObject(i);
+                        JSONObject recipe = currentRecipeObject.getJSONObject("recipe");
 
-
-                    JSONObject first_recipe = hits_array.getJSONObject(0);
-                    JSONObject recipe = first_recipe.getJSONObject("recipe");
-
-                    // get individual recipe info
-                    recipeModel.setCalories(recipe.getLong("calories"));
-                    recipeModel.setAllergyContain(recipe.getJSONArray("cautions"));
-                    recipeModel.setCuisineType(recipe.getJSONArray("cuisineType"));
-                    recipeModel.setDietLabels(recipe.getJSONArray("dietLabels"));
-                    recipeModel.setDishType(recipe.getJSONArray("dishType"));
-                    recipeModel.setHealthLabels(recipe.getJSONArray("healthLabels"));
-                    recipeModel.setImageUrl(recipe.getString("image"));
-                    recipeModel.setIngredientLines(recipe.getJSONArray("ingredientLines"));
-
-                    if (label.isEmpty()) {
+                        // get individual recipe info
+                        recipeModel.setCalories(recipe.getLong("calories"));
+                        recipeModel.setAllergyContain(recipe.getJSONArray("cautions"));
+                        recipeModel.setCuisineType(recipe.getJSONArray("cuisineType"));
+                        recipeModel.setDietLabels(recipe.getJSONArray("dietLabels"));
+                        recipeModel.setDishType(recipe.getJSONArray("dishType"));
+                        recipeModel.setHealthLabels(recipe.getJSONArray("healthLabels"));
+                        recipeModel.setImageUrl(recipe.getString("image"));
+                        recipeModel.setIngredientLines(recipe.getJSONArray("ingredientLines"));
                         recipeModel.setLabel(recipe.getString("label"));
-                    } else {
-                        recipeModel.setLabel(label);
+                        recipeModel.setMealType(recipe.getJSONArray("mealType"));
+                        recipeModel.setShareUrl(recipe.getString("shareAs"));
+                        recipeModel.setTotalTime(recipe.getInt("totalTime"));
+                        recipeModel.setRecipeCal(recipe.getLong("totalWeight"));
+                        recipeModel.setViewOnWebUrl(recipe.getString("url"));
+
+                        recipesArray.add(recipeModel);
                     }
 
-                    recipeModel.setMealType(recipe.getJSONArray("mealType"));
-                    recipeModel.setShareUrl(recipe.getString("shareAs"));
-                    recipeModel.setTotalTime(recipe.getInt("totalTime"));
-                    recipeModel.setRecipeCal(recipe.getLong("totalWeight"));
-                    recipeModel.setViewOnWebUrl(recipe.getString("url"));
-
-                    recipesArray.add(recipeModel);
-
+                    //recipesArray.add(recipeModel);
 
                     callback.onResponse(recipesArray);
 

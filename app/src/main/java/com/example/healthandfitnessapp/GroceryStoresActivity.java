@@ -155,7 +155,7 @@ public class GroceryStoresActivity extends AppCompatActivity implements Location
                         // update the adapter with new stores
                         adapter.setItems(storeModelList);
                         adapter.notifyDataSetChanged();
-                        //recyclerView.notify();
+
                     }
 
                     @Override

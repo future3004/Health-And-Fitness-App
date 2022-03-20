@@ -13,15 +13,22 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.healthandfitnessapp.Models.RecipeModel;
 import com.example.healthandfitnessapp.Models.SearchResultModel;
+import com.example.healthandfitnessapp.Models.StoreModel;
 import com.example.healthandfitnessapp.R;
 import com.example.healthandfitnessapp.SearchResultActivity;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class DisplayResultsAdapter extends RecyclerView.Adapter<DisplayResultsAdapter.ViewHolder>{
     Context mContext;
-    private final List<SearchResultModel> mResults;
+    private List<SearchResultModel> mResults;
+    private List<RecipeModel> recipeList;
 
     public DisplayResultsAdapter(Context context, List<SearchResultModel> results) {
         this.mContext = context;
@@ -46,16 +53,16 @@ public class DisplayResultsAdapter extends RecyclerView.Adapter<DisplayResultsAd
             if (currentResultItem != null) {
                 String imageUrl = currentResultItem.getImageUrl();
 
-/*                try {
+               try {
                     Glide.with(mContext)
-                            .load(R.drawable.recipe_image)
+                            .load(currentResultItem.getImageUrl())
                             .into(holder.getImageView());
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                }*/
-                holder.getImageView().setBackgroundResource(R.drawable.recipe_image);
+                }
 
+                //holder.getImageView().setBackgroundResource(R.drawable.recipe_image);
                 holder.getMainTextView().setText(currentResultItem.getMainText());
                 holder.getInfoTextView().setText(currentResultItem.getInfoText());
                 holder.getExtraTextView().setText(currentResultItem.getExtraText());
@@ -64,18 +71,52 @@ public class DisplayResultsAdapter extends RecyclerView.Adapter<DisplayResultsAd
 
         }
 
-        //holder.getImageView().setImageDrawable(R.drawable.recipe_image);
 
         holder.getImageView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //Toast.makeText(mContext, "Clicked..", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(mContext, SearchResultActivity.class);
-                mContext.startActivity(intent);
+                if (recipeList != null) {
+                    int position = holder.getAdapterPosition();
+
+                    final RecipeModel currentRecipeItem = recipeList.get(position);
+
+                    Intent intent = new Intent(mContext, SearchResultActivity.class);
+                    intent.putExtra("thumbNail", currentRecipeItem.getImageUrl());
+                    intent.putExtra("label", currentRecipeItem.getLabel());
+
+                    //JSONArray recipeInstructions = currentRecipeItem.getIngredientLines();
+                    int total_ingredients = currentRecipeItem.getIngredientLines().length();
+                    intent.putExtra("totalIngredients", total_ingredients);
+
+                    intent.putExtra("time", currentRecipeItem.getTotalTime());
+                    intent.putExtra("calories", currentRecipeItem.getCalories());
+
+                    ArrayList<String> prepInstructions = new ArrayList<>();
+                    for (int i=0; i < currentRecipeItem.getIngredientLines().length(); i++) {
+                        try {
+                            prepInstructions.add(currentRecipeItem.getIngredientLines().getString(i));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    intent.putStringArrayListExtra("instructions", prepInstructions);
+                    intent.putExtra("moreInfo", currentRecipeItem.getViewOnWebUrl());
+                    mContext.startActivity(intent);
+
+                }
+
             }
         });
     }
 
+    public void setItems(List<SearchResultModel> list) {
+        this.mResults = list;
+    }
+
+    public void setRecipeModelList(List<RecipeModel> recipeModelList) {
+        this.recipeList = recipeModelList;
+    }
 
     @Override
     public int getItemCount() {

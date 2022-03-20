@@ -11,7 +11,8 @@
         android:id="@+id/search_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="10dp"
+        />
 
     <LinearLayout
         android:id="@+id/card_layout"
@@ -26,36 +27,16 @@
             android:layout_marginStart="10dp"
             android:text="Search" />
 
-        <Button
-            android:id="@+id/get_recipe_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="Get Recipe" />
-
-        <Button
-            android:id="@+id/get_fruits_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="Get Fruits" />
-
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/get_stores_btn"
-        android:layout_below="@+id/card_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:text="Find GroceryStores" />
+
 
     <RelativeLayout
-        android:layout_below="@+id/get_stores_btn"
+        android:layout_below="@+id/card_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="9dp">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/display_results_recyclerView"
@@ -66,4 +47,12 @@
     </RelativeLayout>
 
 </RelativeLayout>
+
+    <!--    <Button
+            android:id="@+id/get_stores_btn"
+            android:layout_below="@+id/card_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Find GroceryStores" />-->
 

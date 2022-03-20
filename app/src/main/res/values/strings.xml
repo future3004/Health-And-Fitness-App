@@ -2,4 +2,6 @@
     <string name="app_name">Health And Fitness App</string>
     <string name="list">ListDisplay</string>
     <string name="action_settings">Settings</string>
+    <string name="goTo_grocery">Find Grocery Stores</string>
+    <string name="menu_other">Others</string>
 </resources>
