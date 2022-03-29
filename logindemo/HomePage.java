@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class HomePage extends AppCompatActivity {
 
@@ -14,7 +15,19 @@ public class HomePage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
 
-        //LISTENERS FOR THE 6 BOTTOM BUTTONS ON HOME PAGE
+        //uncomment all when able to test
+
+        //LISTENERS FOR THE 7 BOTTOM BUTTONS ON HOME PAGE
+        /*
+
+        TextView progressTimeLineLink = (TextView) findViewById(R.id.progressTimelineLink);
+        progressTimeLineLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openProgressTimeLinePage();
+            }
+        });
+
         Button currentDayButton = (Button) findViewById(R.id.currentDay);
         currentDayButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,9 +75,18 @@ public class HomePage extends AppCompatActivity {
                 openFindHealthyOptionsPage();
             }
         });
+
+         */
     }
     //METHODS FOR OPENING OTHER APP PAGES FROM BUTTONS
     //ALL STILL NEED THE C FILES FOR EACH PAGE... CAN COMMENT OUT
+    /*
+
+    public void openProgressTimeLinePage(){
+        Intent intent = new Intent(this, ProgressTimeLine.class);
+        startActivity(intent);
+    }
+
     public void openCurrentDayPage() {
         Intent intent = new Intent(this, CurrentDayPage.class);
         startActivity(intent);
@@ -94,4 +116,5 @@ public class HomePage extends AppCompatActivity {
         Intent intent = new Intent(this, FindHealthyOptionsPage.class);
         startActivity(intent);
     }
+     */
 }
