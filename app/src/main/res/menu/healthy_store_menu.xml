@@ -7,6 +7,11 @@
         android:icon="@drawable/outline_local_grocery_store_24"
         app:showAsAction="always"/>
 
+    <item android:id="@+id/action_gymsAndParks"
+        android:title="@string/goTo_grocery"
+        android:icon="@drawable/outline_search_24"
+        app:showAsAction="ifRoom"/>
+
 
 </menu>
 

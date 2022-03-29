@@ -134,6 +134,10 @@ public class MainActivity extends AppCompatActivity {
                 // go to grocery store page
                 startActivity(new Intent(MainActivity.this, GroceryStoresActivity.class));
                 return true;
+            case R.id.action_gymsAndParks:
+                // go to gym and park page
+                startActivity(new Intent(MainActivity.this, GymParkActivity.class));
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".GymParkActivity">
+
+    <EditText
+        android:id="@+id/gym_editText"
+        android:layout_width="match_parent"
+        android:textColor="@android:color/black"
+        android:textColorHint="@android:color/black"
+        android:hint="type city"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/find_gym_button" />
+
+    <Button
+        android:id="@+id/find_gym_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:text="Find Gym" />
+
+    <Button
+        android:id="@+id/find_park_button"
+        android:layout_below="@+id/gym_editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Find Park" />
+
+    <TextView
+        android:id="@+id/text_info"
+        android:layout_below="@+id/find_park_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/nearby_services_recycleView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/text_info"
+        android:layout_marginTop="5dp"
+        android:scrollbars="vertical"/>
+
+</RelativeLayout>
