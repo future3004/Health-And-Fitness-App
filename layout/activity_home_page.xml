@@ -102,13 +102,13 @@
         android:layout_marginTop="185dp"
         android:layout_marginEnd="51dp"
         android:layout_marginBottom="5dp"
+        android:clickable="true"
         android:gravity="center"
         android:padding="5dp"
         android:text="See progress timeline graph"
         android:textColor="@color/teal_700"
         android:textSize="20dp"
-        android:textStyle="bold"
-        android:clickable="true" />
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/currentDay"
