@@ -1,19 +1,15 @@
 package com.example.healthandfitnessapp.API;
 
 import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.healthandfitnessapp.Controllers.VolleyQueueSingleton;
-import com.example.healthandfitnessapp.MainActivity;
 import com.example.healthandfitnessapp.Models.RecipeModel;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -41,7 +37,7 @@ public class EdamamApiService {
         List<RecipeModel> recipesArray = new ArrayList<>();
 
         String searchURL = EDAMAM_API + userQuery;
-        //Toast.makeText(MainActivity.this, "Searching..." + userQuery, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(HealthOptionsActivity.this, "Searching..." + userQuery, Toast.LENGTH_SHORT).show();
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, searchURL, null, new Response.Listener<JSONObject>() {
             @Override

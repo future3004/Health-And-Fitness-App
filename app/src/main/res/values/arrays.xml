@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sexChoices">
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+
+    <string-array name="activityLevelChoices">
+        <item>Inactive</item>
+        <item>Moderately Active</item>
+        <item>Very Active</item>
+    </string-array>
+
+    <string-array name="typeOfGoalChoices">
+        <item>Weight Loss</item>
+        <item>Build Muscle</item>
+        <item>Maintenance</item>
+    </string-array>
+</resources>

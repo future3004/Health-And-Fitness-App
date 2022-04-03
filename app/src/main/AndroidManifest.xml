@@ -14,13 +14,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HealthAndFitnessApp">
         <activity
-            android:name=".GymParkActivity"
+            android:name=".RemindersActivity"
             android:exported="false" />
         <activity
-            android:name=".GroceryStoresActivity"
+            android:name=".TodayTasksActivity"
             android:exported="false" />
         <activity
-            android:name=".SearchResultActivity"
+            android:name=".MacrosHelpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CurrentDayActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
@@ -31,6 +34,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".HomePage"
+            android:exported="false" />
+        <activity
+            android:name=".GettingStarted"
+            android:exported="false" />
+        <activity
+            android:name=".FirstTimeSignUp"
+            android:exported="false" />
+        <activity
+            android:name=".GymParkActivity"
+            android:exported="false" />
+        <activity
+            android:name=".GroceryStoresActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SearchResultActivity"
+            android:exported="false" />
+        <activity
+            android:name=".HealthOptionsActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/app_background"
+    tools:context=".GettingStarted">
+
+    <!-- TO DO: figure out variables in text views -->
+    <TextView
+        android:id="@+id/homePageHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Place Holder Home Page"
+        android:textColor="@color/black"
+        android:textSize="35dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/startingWeightText"
+        android:layout_width="254dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/homePageHeader"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="5dp"
+        android:gravity="left"
+        android:padding="5dp"
+        android:text="Starting Weight: xxx.x"
+        android:textColor="@color/black"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/currentWeightHomeText"
+        android:layout_width="254dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/startingWeightText"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="5dp"
+        android:gravity="left"
+        android:padding="5dp"
+        android:text="Current Weight: xxx.x"
+        android:textColor="@color/black"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/goalWeightHomeText"
+        android:layout_width="254dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/currentWeightHomeText"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="5dp"
+        android:gravity="left"
+        android:padding="5dp"
+        android:text="Goal Weight: xxx.x"
+        android:textColor="@color/black"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/expectedGoalDateText"
+        android:layout_width="397dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/goalWeightHomeText"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="5dp"
+        android:gravity="left"
+        android:padding="5dp"
+        android:text="Expected Achievement Date: xx/xx/xxxx"
+        android:textColor="@color/black"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/progressText"
+        android:layout_width="308dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/expectedGoalDateText"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="5dp"
+        android:gravity="left"
+        android:padding="5dp"
+        android:text="Progress towards goal: xx%"
+        android:textColor="@color/black"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+    <!-- TO DO: create progress bar -->
+
+    <Button
+        android:id="@+id/currentDay"
+        android:layout_width="125dp"
+        android:layout_height="75dp"
+        android:layout_below="@+id/homePageHeader"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="400dp"
+        android:layout_marginEnd="279dp"
+        android:backgroundTint="@color/design_default_color_primary_variant"
+        android:gravity="center"
+        android:text="Current Day" />
+
+    <Button
+        android:id="@+id/macrosHelp"
+        android:layout_width="125dp"
+        android:layout_height="75dp"
+        android:layout_below="@+id/homePageHeader"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="475dp"
+        android:layout_marginEnd="279dp"
+        android:gravity="center"
+        android:text="Macros Help"
+        android:backgroundTint="@color/design_default_color_primary_variant"
+        />
+
+    <Button
+        android:id="@+id/toDoToday"
+        android:layout_width="125dp"
+        android:layout_height="75dp"
+        android:layout_below="@+id/homePageHeader"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="142dp"
+        android:layout_marginTop="400dp"
+        android:layout_marginEnd="144dp"
+        android:gravity="center"
+        android:text="To Do Today"
+        android:backgroundTint="@color/design_default_color_primary_variant"
+        />
+
+    <Button
+        android:id="@+id/findGymsOrParks"
+        android:layout_width="125dp"
+        android:layout_height="75dp"
+        android:layout_below="@+id/homePageHeader"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="142dp"
+        android:layout_marginTop="475dp"
+        android:layout_marginEnd="144dp"
+        android:gravity="center"
+        android:text="Find Gyms or Parks"
+        android:backgroundTint="@color/design_default_color_primary_variant"
+        />
+
+    <Button
+        android:id="@+id/reminders"
+        android:layout_width="125dp"
+        android:layout_height="75dp"
+        android:layout_below="@+id/homePageHeader"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="279dp"
+        android:layout_marginTop="400dp"
+        android:layout_marginEnd="7dp"
+        android:gravity="center"
+        android:text="Reminders"
+        android:backgroundTint="@color/design_default_color_primary_variant"
+        />
+
+    <Button
+        android:id="@+id/findHealthyOptions"
+        android:layout_width="125dp"
+        android:layout_height="75dp"
+        android:layout_below="@+id/homePageHeader"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="278dp"
+        android:layout_marginTop="475dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        android:text="Healthy Options"
+        android:backgroundTint="@color/design_default_color_primary_variant"
+        />
+
+
+</RelativeLayout>

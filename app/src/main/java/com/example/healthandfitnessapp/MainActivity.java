@@ -1,146 +1,121 @@
 package com.example.healthandfitnessapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.healthandfitnessapp.Controllers.DisplayResultsAdapter;
-import com.example.healthandfitnessapp.Models.RecipeModel;
-import com.example.healthandfitnessapp.Models.SearchResultModel;
-import com.example.healthandfitnessapp.API.EdamamApiService;
-import com.example.healthandfitnessapp.Util.GridSpacingItemDecoration;
-
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
-    private Button searchBtn;
-    private SearchView searchView;
-    private RecyclerView displayRecycleView;
 
-    private List<SearchResultModel> searchResults = null;
-    private DisplayResultsAdapter resultsAdapter;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
-    final int spanCount = 2; // 2 columns
-    final int spacing = 25; // 25px for padding
+    MaterialButton submitButton;
+    EditText emailLogIn;
+    EditText passwordLogIn;
+    TextView signUpLink;
+
+    FirebaseAuth mAuth = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        searchView = findViewById(R.id.search_bar);
-        searchBtn = findViewById(R.id.search_btn);
-        displayRecycleView = findViewById(R.id.display_results_recyclerView);
+        // Obtain the FirebaseAnalytics instance.
+        //mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
+        emailLogIn = findViewById(R.id.Email);
+        passwordLogIn = findViewById(R.id.password);
+        submitButton = findViewById(R.id.submitButtonLogInPage);
+        signUpLink = findViewById(R.id.signUpLink);
 
-        // api provider
-        final EdamamApiService apiService = new EdamamApiService(MainActivity.this);
-        searchResults = new ArrayList<>();
-
-        // populate the ui here
-        resultsAdapter = new DisplayResultsAdapter(MainActivity.this, searchResults);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
-        displayRecycleView.setLayoutManager(gridLayoutManager);
-
-        //AutoFitGridLayoutManager autoFitGridLayoutManager = new AutoFitGridLayoutManager(MainActivity.this, 500);
-        //displayRecycleView.setLayoutManager(autoFitGridLayoutManager);
-
-        displayRecycleView.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, true));
-        displayRecycleView.setAdapter(resultsAdapter);
-
-        searchBtn.setOnClickListener(new View.OnClickListener() {
+        //testing with email and password as "admin" and "admin"
+        //MaterialButton submitButtonLogInPage = (MaterialButton) findViewById(R.id.submitButtonLogInPage);
+        submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                // get user search query
-                String userQuery = searchView.getQuery().toString();
-
-                // check if we have a query
-                if (userQuery.matches("")) {
-                    Toast.makeText(getApplicationContext(), "Nothing to search..", Toast.LENGTH_SHORT).show();
-                    return;
+                if(emailLogIn.getText().toString().equals("admin") && passwordLogIn.getText().toString().equals("admin")){
+                    //correct
+                    Toast.makeText(MainActivity.this, "LOGIN SUCCESSFUL", Toast.LENGTH_SHORT).show();
+                    openHomePage();
+                }else {
+                    //incorrect
+                    Toast.makeText(MainActivity.this, "INCORRECT LOGIN, PLEASE RE-ENTER", Toast.LENGTH_SHORT).show();
                 }
-
-                // get query object
-                apiService.getRecipeInfo(userQuery, new EdamamApiService.GetRecipeCallback() {
-                    @Override
-                    public void onResponse(List<RecipeModel> recipe) {
-                        Log.i("Edamam Recipe found: ", recipe.toString());
-                        // Toast.makeText(MainActivity.this, recipe.get(0).toString(), Toast.LENGTH_LONG).show();
-                        // set this list to the adapter
-                        resultsAdapter.setRecipeModelList(recipe);
-
-                        List<SearchResultModel> searchResults = new ArrayList<>();
-
-                        for (int i=0; i < recipe.size(); i++) {
-
-                            int totalIngredients = recipe.get(i).getIngredientLines().length();
-                            String infoText = totalIngredients + " ingredients";
-
-                            int totalTime = recipe.get(i).getTotalTime();
-                            String extraText = totalTime + " min";
-
-                            searchResults.add(new SearchResultModel(recipe.get(i).getImageUrl(),
-                                    recipe.get(i).getLabel(), infoText, extraText));
-                        }
-
-                        // update the adapter with new stores
-                        resultsAdapter.setItems(searchResults);
-                        resultsAdapter.notifyDataSetChanged();
-
-                    }
-
-                    @Override
-                    public void onError(String message) {
-                        Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
-                    }
-                });
             }
         });
 
+        //mAuth = FirebaseAuth.getInstance();
+
+
+        //Sign Up Link
+
+        signUpLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openFirstTimeSignUpPage();
+            }
+        });
     }
+    private void loginUser(){
+        String password = passwordLogIn.getText().toString();
+        String email = emailLogIn.getText().toString();
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        // connect the artists menu in menu res
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.healthy_store_menu, menu);
-
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()){
-            case R.id.action_groceryStores:
-                // go to grocery store page
-                startActivity(new Intent(MainActivity.this, GroceryStoresActivity.class));
-                return true;
-            case R.id.action_gymsAndParks:
-                // go to gym and park page
-                startActivity(new Intent(MainActivity.this, GymParkActivity.class));
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (TextUtils.isEmpty(password)){
+            passwordLogIn.setError("Password cannot be empty");
+            passwordLogIn.requestFocus();
+        }else if (TextUtils.isEmpty(email)){
+            emailLogIn.setError("Username cannot be empty");
+            emailLogIn.requestFocus();
+        }else{
+            startActivity(new Intent(MainActivity.this, HomePage.class));
+/*            mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if(task.isSuccessful()){
+                        Toast.makeText(MainActivity.this, "Log in successful", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(MainActivity.this, MainActivity.class)); //idk if second param is correct
+                    }else{
+                        Toast.makeText(MainActivity.this, "Log in Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });*/
         }
     }
 
+    @Override
+    protected void onStart(){
+        super.onStart();
+/*        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null){
+            startActivity(new Intent(MainActivity.this, MainActivity.class)); //idk if second param is correct
+        }*/
+    }
+
+
+    //Can i use "intent" for all of these???
+    public void openHomePage(){
+        Intent intent = new Intent(this, HomePage.class);
+        startActivity(intent);
+    }
+
+    public void openFirstTimeSignUpPage(){
+        Intent intent = new Intent(this, FirstTimeSignUp.class);
+        startActivity(intent);
+    }
 }
