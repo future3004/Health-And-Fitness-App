@@ -72,6 +72,11 @@ public class SearchResultActivity extends AppCompatActivity {
         adapter = new ArrayAdapter<>(this, R.layout.cooking_list_item, R.id.instruction_label, cookingInstructions);
         listView.setAdapter(adapter);
 
-        fab.setOnClickListener(view -> Toast.makeText(SearchResultActivity.this, "visit: " + webUrl, Toast.LENGTH_SHORT).show());
+        fab.setOnClickListener(view -> {
+            //Toast.makeText(SearchResultActivity.this, "visit: " + webUrl, Toast.LENGTH_SHORT).show();
+            Intent intent1 = new Intent(SearchResultActivity.this, WebViewActivity.class);
+            intent1.putExtra("ToUrl", webUrl);
+            startActivity(intent1);
+        });
     }
 }

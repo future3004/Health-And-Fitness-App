@@ -131,10 +131,6 @@ public class HealthOptionsActivity extends AppCompatActivity {
                 // go to grocery store page
                 startActivity(new Intent(HealthOptionsActivity.this, GroceryStoresActivity.class));
                 return true;
-            case R.id.action_gymsAndParks:
-                // go to gym and park page
-                startActivity(new Intent(HealthOptionsActivity.this, GymParkActivity.class));
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

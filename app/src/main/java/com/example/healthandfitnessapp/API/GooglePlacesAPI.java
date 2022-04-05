@@ -63,6 +63,7 @@ public class GooglePlacesAPI {
                         //Log.i("Photo ref_google-api: ", store.getJSONArray("photos").getJSONObject(0).getString("photo_reference"));
 
                         String photo_ref = store.getJSONArray("photos").getJSONObject(0).getString("photo_reference");
+                        if (photo_ref.matches("")) photo_ref = "Aap_uECqZiCinEDIPnh1tlbvju3OjqbLU9KaNRTABOLJrMJyROk0aR96nBXmVbdw1tSvFOadd8HUZoSRS-9Sers0KPa8qDC8xs2n2JUn_bzL3WbWcxbGwoRtaZDukne_qYJ33Got-hsQiZGwrKBrrJ4UNZbi_ymk2TItWTfIoYXUT7mTQaWP";
                         storeModel.setPhotoReference(photo_ref);
 
                         //storeModel.setPhotoReference("Aap_uECqZiCinEDIPnh1tlbvju3OjqbLU9KaNRTABOLJrMJyROk0aR96nBXmVbdw1tSvFOadd8HUZoSRS-9Sers0KPa8qDC8xs2n2JUn_bzL3WbWcxbGwoRtaZDukne_qYJ33Got-hsQiZGwrKBrrJ4UNZbi_ymk2TItWTfIoYXUT7mTQaWP");
@@ -140,6 +141,7 @@ public class GooglePlacesAPI {
                         //Log.i("Photo ref_google-api: ", store.getJSONArray("photos").getJSONObject(0).getString("photo_reference"));
 
                         String photo_ref = store.getJSONArray("photos").getJSONObject(0).getString("photo_reference");
+                        if (photo_ref.matches("")) photo_ref = "Aap_uECqZiCinEDIPnh1tlbvju3OjqbLU9KaNRTABOLJrMJyROk0aR96nBXmVbdw1tSvFOadd8HUZoSRS-9Sers0KPa8qDC8xs2n2JUn_bzL3WbWcxbGwoRtaZDukne_qYJ33Got-hsQiZGwrKBrrJ4UNZbi_ymk2TItWTfIoYXUT7mTQaWP";
                         storeModel.setPhotoReference(photo_ref);
 
                         //storeModel.setPhotoReference("Aap_uECqZiCinEDIPnh1tlbvju3OjqbLU9KaNRTABOLJrMJyROk0aR96nBXmVbdw1tSvFOadd8HUZoSRS-9Sers0KPa8qDC8xs2n2JUn_bzL3WbWcxbGwoRtaZDukne_qYJ33Got-hsQiZGwrKBrrJ4UNZbi_ymk2TItWTfIoYXUT7mTQaWP");
