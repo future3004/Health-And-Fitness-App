@@ -16,19 +16,36 @@
         android:theme="@style/Theme.HealthAndFitnessApp">
         <activity
             android:name=".WebViewActivity"
-            android:exported="false" />
+            android:exported="false">
+        </activity>
         <activity
             android:name=".RemindersActivity"
-            android:exported="false" />
+            android:exported="false">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.healthandfitnessapp.HomePage" />
+        </activity>
         <activity
             android:name=".TodayTasksActivity"
-            android:exported="false" />
+            android:exported="false">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.healthandfitnessapp.HomePage" />
+        </activity>
         <activity
             android:name=".MacrosHelpActivity"
-            android:exported="false" />
+            android:exported="false">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.healthandfitnessapp.HomePage" />
+        </activity>
         <activity
             android:name=".CurrentDayActivity"
-            android:exported="false" />
+            android:exported="false">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.healthandfitnessapp.HomePage" />
+        </activity>
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -43,22 +60,46 @@
             android:exported="false" />
         <activity
             android:name=".GettingStarted"
-            android:exported="false" />
+            android:exported="false">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.healthandfitnessapp.MainActivity" />
+        </activity>
         <activity
             android:name=".FirstTimeSignUp"
-            android:exported="false" />
+            android:exported="false">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.healthandfitnessapp.MainActivity" />
+        </activity>
         <activity
             android:name=".GymParkActivity"
-            android:exported="false" />
+            android:exported="false">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.healthandfitnessapp.HomePage" />
+        </activity>
         <activity
             android:name=".GroceryStoresActivity"
-            android:exported="false" />
+            android:exported="false">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.healthandfitnessapp.HealthOptionsActivity" />
+        </activity>
         <activity
             android:name=".SearchResultActivity"
-            android:exported="false" />
+            android:exported="false">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.healthandfitnessapp.HealthOptionsActivity" />
+        </activity>
         <activity
             android:name=".HealthOptionsActivity"
-            android:exported="false" />
+            android:exported="false">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.healthandfitnessapp.HomePage" />
+        </activity>
     </application>
 
 </manifest>

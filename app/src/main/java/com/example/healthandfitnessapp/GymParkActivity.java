@@ -1,5 +1,6 @@
 package com.example.healthandfitnessapp;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -38,6 +39,14 @@ public class GymParkActivity extends AppCompatActivity {
         findParkBtn = findViewById(R.id.find_park_button);
         infoTextView = findViewById(R.id.text_info);
         recyclerView = findViewById(R.id.nearby_services_recycleView);
+
+        // set toolbar
+        ActionBar actionBar = getSupportActionBar();
+        try {
+            actionBar.setTitle("Gyms And Parks");
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        } catch (Exception e){ e.printStackTrace(); }
+
 
         // places api provider
         final GooglePlacesAPI googlePlacesAPI = new GooglePlacesAPI(GymParkActivity.this);

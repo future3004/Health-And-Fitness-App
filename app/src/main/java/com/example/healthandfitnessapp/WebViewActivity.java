@@ -1,5 +1,6 @@
 package com.example.healthandfitnessapp;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -16,6 +17,13 @@ public class WebViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
         webView = findViewById(R.id.webView);
+
+        // set toolbar
+        ActionBar actionBar = getSupportActionBar();
+        try {
+            actionBar.setTitle("Source website");
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        } catch (Exception e){ e.printStackTrace(); }
 
         // grab the url from intent
         Intent intent = getIntent();

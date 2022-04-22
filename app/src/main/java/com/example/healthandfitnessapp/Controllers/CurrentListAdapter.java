@@ -1,7 +1,6 @@
 package com.example.healthandfitnessapp.Controllers;
 
 import android.app.Activity;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
-import com.example.healthandfitnessapp.Models.CurrentDayList;
 import com.example.healthandfitnessapp.R;
-
-import java.util.List;
 
 public class CurrentListAdapter extends ArrayAdapter<String> {
     private final Activity context;
@@ -39,6 +35,9 @@ public class CurrentListAdapter extends ArrayAdapter<String> {
         ImageView imageView = (ImageView) rowView.findViewById(R.id.food_imageView);
         TextView titleText = (TextView) rowView.findViewById(R.id.title_textView);
         TextView subtitleText = (TextView) rowView.findViewById(R.id.more_info_textView);
+        imageView.setTag(position);
+        titleText.setTag(position);
+        subtitleText.setTag(position);
 
         //imageView.setImageResource(imgid[position]);
         if (imgUrl[position].matches("")) {

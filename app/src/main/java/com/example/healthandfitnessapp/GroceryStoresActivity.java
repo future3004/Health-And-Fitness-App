@@ -4,8 +4,10 @@ import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -79,6 +81,12 @@ public class GroceryStoresActivity extends AppCompatActivity implements Location
         searchBtn = findViewById(R.id.search_button);
         textView = findViewById(R.id.show_user_info);
         recyclerView = findViewById(R.id.nearby_stores_recycleView);
+
+        ActionBar actionBar = getSupportActionBar();
+        try {
+            actionBar.setTitle("Grocery Stores");
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        } catch (Exception e){ e.printStackTrace(); }
 
         // places api provider
         final GooglePlacesAPI googlePlacesAPI = new GooglePlacesAPI(GroceryStoresActivity.this);

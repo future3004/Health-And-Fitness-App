@@ -1,14 +1,14 @@
 package com.example.healthandfitnessapp.Models;
 
-public class CurrentDayList {
-    private String imageUrl;
+public class CurrentDayModel {
     private String title;
     private String extraInfo;
+    private String imageUrl;
 
-    public CurrentDayList(String imageUrl, String title, String extraInfo) {
-        this.imageUrl = imageUrl;
+    public CurrentDayModel(String title, String extraInfo, String imageUrl) {
         this.title = title;
         this.extraInfo = extraInfo;
+        this.imageUrl = imageUrl;
     }
 
     public String getImageUrl() {

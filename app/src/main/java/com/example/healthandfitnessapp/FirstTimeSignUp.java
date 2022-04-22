@@ -1,6 +1,7 @@
 package com.example.healthandfitnessapp;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -38,6 +39,12 @@ public class FirstTimeSignUp extends AppCompatActivity {
         submitButtonSignUpPage = findViewById(R.id.submitButtonSignUpPage);
 
         //mAuth = FirebaseAuth.getInstance();
+        // set toolbar
+        ActionBar actionBar = getSupportActionBar();
+        try {
+            actionBar.setTitle("Signup");
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        } catch (Exception e){ e.printStackTrace(); }
 
         submitButtonSignUpPage.setOnClickListener(view -> {
             createUser();

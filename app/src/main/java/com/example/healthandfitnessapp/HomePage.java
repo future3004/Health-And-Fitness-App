@@ -1,5 +1,6 @@
 package com.example.healthandfitnessapp;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -19,6 +20,13 @@ public class HomePage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
+
+        // set toolbar
+        ActionBar actionBar = getSupportActionBar();
+        try {
+            actionBar.setTitle("Home");
+            //actionBar.setDisplayHomeAsUpEnabled(true);
+        } catch (Exception e){ e.printStackTrace(); }
 
         currentDayButton = findViewById(R.id.currentDay);
         macrosHelpButton = (Button) findViewById(R.id.macrosHelp);

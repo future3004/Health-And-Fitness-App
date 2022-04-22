@@ -1,18 +1,19 @@
 package com.example.healthandfitnessapp;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.healthandfitnessapp.Controllers.CurrentListAdapter;
 import com.example.healthandfitnessapp.Controllers.ExerciseListAdapter;
-import com.example.healthandfitnessapp.Models.CurrentDayList;
+import com.example.healthandfitnessapp.Controllers.MealListAdapter;
+import com.example.healthandfitnessapp.Models.CurrentDayModel;
 import com.example.healthandfitnessapp.Util.CustomDialog;
 
 import java.util.ArrayList;
@@ -20,90 +21,80 @@ import java.util.List;
 
 public class CurrentDayActivity extends AppCompatActivity {
 
-    private ImageView breakfastCameraBtn, lunchCameraBtn, dinnerCameraBtn, exerciseCameraBtn;
     private ImageView breakfastAddBtn, lunchAddBtn, dinnerAddBtn, exerciseAddBtn;
     private ListView breakfastListView, lunchListView, dinnerListView, exerciseListView;
 
 
-    private CurrentListAdapter breakfastAdapter = null;
-    private CurrentListAdapter lunchAdapter = null;
-    private CurrentListAdapter dinnerAdapter = null;
     private ExerciseListAdapter exerciseAdapter = null;
-    private String[] breakfastFoodTitles = {"Coffee, w/ Skim milk", "Banana, Medium", "Scrambled Eggs", "Yoghurt"};
-    private String[] breakfastFoodQtys = {"8 fluid ounces", "2", "2", "1"};
-    private String[] breakfastImageUrls = {"https://static01.nyt.com/images/2019/02/05/world/05egg/15xp-egg-promo-jumbo-v2.jpg?quality=75&auto=webp",
-            "",
-            "https://static01.nyt.com/images/2019/02/05/world/05egg/15xp-egg-promo-jumbo-v2.jpg?quality=75&auto=webp",
-            ""};
+    private ArrayList<CurrentDayModel> exerciseItems;
+    private ArrayList<CurrentDayModel> lunchItems;
+    private MealListAdapter lunchAdapter = null;
+    private ArrayList<CurrentDayModel> dinnerItems;
+    private MealListAdapter dinnerAdapter = null;
+    private ArrayList<CurrentDayModel> breakfastItems;
+    private MealListAdapter breakfastAdapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_current_day);
-        breakfastCameraBtn = findViewById(R.id.cameraIcon2);
         breakfastAddBtn = findViewById(R.id.addIcon2);
-        lunchCameraBtn = findViewById(R.id.cameraIcon3);
         lunchAddBtn = findViewById(R.id.addIcon3);
-        dinnerCameraBtn = findViewById(R.id.cameraIcon4);
         dinnerAddBtn = findViewById(R.id.addIcon4);
-        exerciseCameraBtn = findViewById(R.id.cameraIcon5);
         exerciseAddBtn = findViewById(R.id.addIcon5);
         breakfastListView = findViewById(R.id.breakfast_listView);
         lunchListView = findViewById(R.id.lunch_listView);
         dinnerListView = findViewById(R.id.dinner_listView);
         exerciseListView = findViewById(R.id.exercise_listView);
 
+        // set toolbar
+        ActionBar actionBar = getSupportActionBar();
+        try {
+            actionBar.setTitle("Current Day");
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        } catch (Exception e){ e.printStackTrace(); }
+
         // breakfast listView
-        breakfastAdapter = new CurrentListAdapter(this, breakfastFoodTitles,
-                breakfastFoodQtys, breakfastImageUrls);
+        breakfastItems = new ArrayList<>();
+        breakfastItems.add(new CurrentDayModel("Coffee, w/ Skim milk", "8 fluid ounces",
+                "https://static01.nyt.com/images/2019/02/05/world/05egg/15xp-egg-promo-jumbo-v2.jpg?quality=75&auto=webp"));
+        breakfastItems.add(new CurrentDayModel("Scrambled Eggs", "2",
+                "https://static01.nyt.com/images/2019/02/05/world/05egg/15xp-egg-promo-jumbo-v2.jpg?quality=75&auto=webp"));
+        breakfastAdapter = new MealListAdapter(getApplicationContext(), breakfastItems);
         breakfastListView.setAdapter(breakfastAdapter);
-        breakfastListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        breakfastListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getApplicationContext(),"item " + i,Toast.LENGTH_SHORT).show();
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //Toast.makeText(getApplicationContext(),"Remove at: " + i,Toast.LENGTH_SHORT).show();
+                removeItem(breakfastItems, breakfastAdapter, i);
+
+                return false;
             }
         });
 
         // lunch listView
-        lunchAdapter = new CurrentListAdapter(this, breakfastFoodTitles,
-                breakfastFoodQtys, breakfastImageUrls);
+        lunchItems = new ArrayList<>();
+        lunchItems.add(new CurrentDayModel("Stew", "quarter pound",
+                "https://static01.nyt.com/images/2019/02/05/world/05egg/15xp-egg-promo-jumbo-v2.jpg?quality=75&auto=webp"));
+        lunchItems.add(new CurrentDayModel("Stew", "quarter pound",
+                "https://static01.nyt.com/images/2019/02/05/world/05egg/15xp-egg-promo-jumbo-v2.jpg?quality=75&auto=webp"));
+        lunchItems.add(new CurrentDayModel("Stew", "quarter pound",
+                "https://static01.nyt.com/images/2019/02/05/world/05egg/15xp-egg-promo-jumbo-v2.jpg?quality=75&auto=webp"));
+        lunchAdapter = new MealListAdapter(getApplicationContext(), lunchItems);
         lunchListView.setAdapter(lunchAdapter);
-        lunchListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getApplicationContext(),"item " + i,Toast.LENGTH_SHORT).show();
-            }
-        });
 
         // dinner listView
-        dinnerAdapter = new CurrentListAdapter(this, breakfastFoodTitles,
-                breakfastFoodQtys, breakfastImageUrls);
+        dinnerItems = new ArrayList<>();
+        dinnerItems.add(new CurrentDayModel("Spaghetti", "small", ""));
+        dinnerItems.add(new CurrentDayModel("Spaghetti", "small", ""));
+        dinnerAdapter = new MealListAdapter(getApplicationContext(), dinnerItems);
         dinnerListView.setAdapter(dinnerAdapter);
-        dinnerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getApplicationContext(),"item " + i,Toast.LENGTH_SHORT).show();
-            }
-        });
 
         // exercise listView
         exerciseListInit();
 
 
         // on click listeners
-        breakfastCameraBtn.setOnClickListener(view -> {
-            Toast.makeText(CurrentDayActivity.this, "Breakfast photo upload..", Toast.LENGTH_SHORT).show();
-        });
-        lunchCameraBtn.setOnClickListener(view -> {
-            Toast.makeText(CurrentDayActivity.this, "Lunch photo upload..", Toast.LENGTH_SHORT).show();
-        });
-        dinnerCameraBtn.setOnClickListener(view -> {
-            Toast.makeText(CurrentDayActivity.this, "Dinner photo upload..", Toast.LENGTH_SHORT).show();
-        });
-        exerciseCameraBtn.setOnClickListener(view -> {
-            Toast.makeText(CurrentDayActivity.this, "Exercise photo upload..", Toast.LENGTH_SHORT).show();
-        });
-
         breakfastAddBtn.setOnClickListener(view -> {
             //Toast.makeText(CurrentDayActivity.this, "Breakfast add", Toast.LENGTH_SHORT).show();
 
@@ -146,27 +137,37 @@ public class CurrentDayActivity extends AppCompatActivity {
         });
     }
 
+    public static void removeItem(ArrayList<CurrentDayModel> list, MealListAdapter adapter,
+                                  int indexToRemove) {
+        list.remove(indexToRemove);
+        adapter.notifyDataSetChanged();
+
+    }
+
+    public static void addItem(CurrentDayModel newItem, ArrayList<CurrentDayModel> list,
+                               ListView listView) {
+        //list.add(newItem);
+        //listView.setAdapter(adapter);
+    }
+
     private void exerciseListInit() {
-        List<String> exerciseNamesList = new ArrayList<>();
-        exerciseNamesList.add("1k Run");
-        exerciseNamesList.add("Swimming");
 
-        List<String> exerciseDurations = new ArrayList<>();
-        exerciseDurations.add("60 minutes");
-        exerciseDurations.add("30 minutes");
-
-        List<String> exercisePhotos = new ArrayList<>();
-        exercisePhotos.add("");
-        exercisePhotos.add("");
+        exerciseItems = new ArrayList<>();
+        exerciseItems.add(new CurrentDayModel("Swimming", "25 minutes",
+                ""));
+        exerciseItems.add(new CurrentDayModel("Cross Country Run", "120 minutes",
+                ""));
 
 
-        exerciseAdapter = new ExerciseListAdapter(this, exerciseNamesList,
-                exerciseDurations, exercisePhotos);
+        exerciseAdapter = new ExerciseListAdapter(CurrentDayActivity.this, exerciseItems);
         exerciseListView.setAdapter(exerciseAdapter);
-        exerciseListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        exerciseListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getApplicationContext(),"item " + i,Toast.LENGTH_SHORT).show();
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //Toast.makeText(getApplicationContext(),"Remove at: " + i,Toast.LENGTH_SHORT).show();
+                exerciseItems.remove(i);
+                exerciseAdapter.notifyDataSetChanged();
+                return false;
             }
         });
     }

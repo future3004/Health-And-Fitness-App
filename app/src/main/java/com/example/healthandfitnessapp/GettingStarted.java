@@ -1,5 +1,6 @@
 package com.example.healthandfitnessapp;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
@@ -41,6 +42,13 @@ public class GettingStarted extends AppCompatActivity {
 
         Intent intent = getIntent();
         String username = intent.getStringExtra("username");
+
+        // set toolbar
+        ActionBar actionBar = getSupportActionBar();
+        try {
+            actionBar.setTitle("Getting started");
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        } catch (Exception e){ e.printStackTrace(); }
 
         String greetingMessage = "Welcome, " + username + ". Please enter the following information to get started:";
         TextView greetingTV = (TextView)findViewById(R.id.gettingStartedText);

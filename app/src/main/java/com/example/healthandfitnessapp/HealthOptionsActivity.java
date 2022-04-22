@@ -1,5 +1,6 @@
 package com.example.healthandfitnessapp;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -43,6 +44,13 @@ public class HealthOptionsActivity extends AppCompatActivity {
         searchView = findViewById(R.id.search_bar);
         searchBtn = findViewById(R.id.search_btn);
         displayRecycleView = findViewById(R.id.display_results_recyclerView);
+
+        // set toolbar
+        ActionBar actionBar = getSupportActionBar();
+        try {
+            actionBar.setTitle("Healthy Options");
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        } catch (Exception e){ e.printStackTrace(); }
 
 
         // api provider

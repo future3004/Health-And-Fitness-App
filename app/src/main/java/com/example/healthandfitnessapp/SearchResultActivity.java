@@ -1,5 +1,6 @@
 package com.example.healthandfitnessapp;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 
@@ -51,6 +52,13 @@ public class SearchResultActivity extends AppCompatActivity {
         String calories = intent.getFloatExtra("calories", 0) + " Cal";
         String webUrl = intent.getStringExtra("moreInfo");
         ArrayList<String> cookingInstructions = intent.getStringArrayListExtra("instructions");
+
+        // set toolbar
+        ActionBar actionBar = getSupportActionBar();
+        try {
+            actionBar.setTitle(label);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        } catch (Exception e){ e.printStackTrace(); }
 
         // load the main image
         try {

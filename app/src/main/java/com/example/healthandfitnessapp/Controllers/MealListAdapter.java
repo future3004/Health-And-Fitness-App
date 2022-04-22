@@ -17,18 +17,16 @@ import com.example.healthandfitnessapp.Models.CurrentDayModel;
 import com.example.healthandfitnessapp.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class ExerciseListAdapter extends ArrayAdapter<CurrentDayModel> {
+public class MealListAdapter extends ArrayAdapter<CurrentDayModel> {
     Context context;
     private ArrayList<CurrentDayModel> list;
 
-    public ExerciseListAdapter(@NonNull Context context, ArrayList<CurrentDayModel> items) {
+    public MealListAdapter(@NonNull Context context, ArrayList<CurrentDayModel> items) {
         super(context, R.layout.current_day_list_item, items);
         this.context = context;
         list = items;
     }
-
 
     @NonNull
     @Override
@@ -41,14 +39,14 @@ public class ExerciseListAdapter extends ArrayAdapter<CurrentDayModel> {
             TextView titleText = (TextView) convertView.findViewById(R.id.title_textView);
             TextView subtitleText = (TextView) convertView.findViewById(R.id.more_info_textView);
 
-
+            //imageView.setImageResource(imgid[position]);
             if (list != null) {
                 CurrentDayModel currentItem = list.get(position);
                 String imageUrl = currentItem.getImageUrl();
 
                 if (imageUrl.matches("")) {
                     Glide.with(context)
-                            .load(R.drawable.exercise_placeholder)
+                            .load(R.drawable.food_placeholder)
                             .into(imageView);
                 } else {
                     Glide.with(context)
@@ -68,5 +66,4 @@ public class ExerciseListAdapter extends ArrayAdapter<CurrentDayModel> {
     public int getCount() {
         return list.size();
     }
-
 }

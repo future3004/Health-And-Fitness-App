@@ -1,6 +1,7 @@
 package com.example.healthandfitnessapp;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -43,6 +44,13 @@ public class MainActivity extends AppCompatActivity {
         passwordLogIn = findViewById(R.id.password);
         submitButton = findViewById(R.id.submitButtonLogInPage);
         signUpLink = findViewById(R.id.signUpLink);
+
+        // set toolbar
+        ActionBar actionBar = getSupportActionBar();
+        try {
+            actionBar.setTitle("Login");
+            //actionBar.setDisplayHomeAsUpEnabled(true);
+        } catch (Exception e){ e.printStackTrace(); }
 
         //testing with email and password as "admin" and "admin"
         //MaterialButton submitButtonLogInPage = (MaterialButton) findViewById(R.id.submitButtonLogInPage);
