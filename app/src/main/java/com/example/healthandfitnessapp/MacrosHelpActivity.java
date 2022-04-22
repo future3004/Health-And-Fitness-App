@@ -1,5 +1,6 @@
 package com.example.healthandfitnessapp;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -76,6 +77,13 @@ public class MacrosHelpActivity extends AppCompatActivity {
         macrosSearchBtn = findViewById(R.id.macros_search_button);
         macrosEditText = findViewById(R.id.editTextMacros);
         macrosListView = findViewById(R.id.macros_recycleView);
+
+        // set toolbar
+        ActionBar actionBar = getSupportActionBar();
+        try {
+            actionBar.setTitle("Macronutrients");
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        } catch (Exception e){ e.printStackTrace(); }
 
         macrosSearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
