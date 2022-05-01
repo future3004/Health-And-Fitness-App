@@ -11,28 +11,32 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.example.healthandfitnessapp.Models.CurrentDayModel;
 import com.example.healthandfitnessapp.R;
 
-public class CustomDialog extends Dialog implements View.OnClickListener {
+import java.util.ArrayList;
 
-    public Context mContext;
-    public Dialog d;
+public class CustomDialog extends Dialog implements View.OnClickListener {
+    Context mContext;
     public Button yes, no;
 
     private String dialogTitle;
-    private TextView dialogTitleTxt;
+    private TextView dialogTitleTxt, calorieTxt;
     private TextView titleTxt, subTxt;
-    private String inputTitle, inputSub;
-    private EditText dialog_titleValue, dialog_subValue;
+    private String inputTitle, inputSub, calorieString;
+    private EditText dialog_titleValue, dialog_subValue, calorieValue;
     //private String inputOneValue, inputTwoValue;
+    private ArrayList<CurrentDayModel> list;
 
-    public CustomDialog(@NonNull Context context, String dialogTitle,
-                        String inputTitle, String inputSub) {
+    public CustomDialog(@NonNull Context context, ArrayList<CurrentDayModel> list, String dialogTitle,
+                        String inputTitle, String inputSub, String calorieTxt) {
         super(context);
         this.mContext = context;
         this.dialogTitle = dialogTitle;
         this.inputTitle = inputTitle;
         this.inputSub = inputSub;
+        this.calorieString = calorieTxt;
+        this.list = list;
     }
 
     @Override
@@ -47,15 +51,16 @@ public class CustomDialog extends Dialog implements View.OnClickListener {
         dialog_titleValue = findViewById(R.id.dialog_titleValue);
         subTxt = findViewById(R.id.subTxt);
         dialog_subValue = findViewById(R.id.dialog_subValue);
+        calorieTxt = findViewById(R.id.calorieTxt);
+        calorieValue = findViewById(R.id.dialog_calorieValue);
 
         dialogTitleTxt.setText(dialogTitle);
         titleTxt.setText(inputTitle);
         subTxt.setText(inputSub);
+        calorieTxt.setText(calorieString);
         yes.setOnClickListener(this);
         no.setOnClickListener(this);
 
-        //inputOneValue = dialog_titleValue.getText().toString().trim();
-        //inputTwoValue = dialog_subValue.getText().toString().trim();
 
     }
 
@@ -63,17 +68,25 @@ public class CustomDialog extends Dialog implements View.OnClickListener {
     public void onClick(View view) {
 
         if (view.getId() == R.id.btn_yes) {
+            String meal = dialog_titleValue.getText().toString().trim();
+            String qty = dialog_subValue.getText().toString().trim();
+            int calories = Integer.parseInt(calorieValue.getText().toString());
+            if (!meal.matches("") || !qty.matches("")) {
+                CurrentDayModel newItem = new CurrentDayModel(meal,
+                        qty, calories, "");
+                // save newItem to db
+                list.add(newItem);
+            }
+
+            dismiss();
 
         } if (view.getId() == R.id.btn_no) {
             dismiss();
         }
     }
 
-    public String getFirstValue() {
-        return dialog_titleValue.getText().toString().trim();
-    }
-    public String getSecondValue() {
-        return dialog_subValue.getText().toString().trim();
+    public ArrayList<CurrentDayModel> newDialogList() {
+        return list;
     }
 
 }

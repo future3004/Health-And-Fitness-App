@@ -48,7 +48,7 @@ public class ExerciseListAdapter extends ArrayAdapter<CurrentDayModel> {
 
                 if (imageUrl.matches("")) {
                     Glide.with(context)
-                            .load(R.drawable.exercise_placeholder)
+                            .load(R.drawable.xercise)
                             .into(imageView);
                 } else {
                     Glide.with(context)
@@ -67,6 +67,10 @@ public class ExerciseListAdapter extends ArrayAdapter<CurrentDayModel> {
     @Override
     public int getCount() {
         return list.size();
+    }
+
+    public void setList(ArrayList<CurrentDayModel> list) {
+        this.list = list;
     }
 
 }

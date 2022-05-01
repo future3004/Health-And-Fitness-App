@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,57 +29,43 @@ public class MainActivity extends AppCompatActivity {
     MaterialButton submitButton;
     EditText emailLogIn;
     EditText passwordLogIn;
-    TextView signUpLink;
+    private TextView signUpLink, forgotPasswordToggle;
 
-    FirebaseAuth mAuth = null;
+    private FirebaseAuth mAuth = null;
+    private FirebaseUser user = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // Obtain the FirebaseAnalytics instance.
-        //mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-
         emailLogIn = findViewById(R.id.Email);
         passwordLogIn = findViewById(R.id.password);
         submitButton = findViewById(R.id.submitButtonLogInPage);
         signUpLink = findViewById(R.id.signUpLink);
+        forgotPasswordToggle = findViewById(R.id.forgotPassword);
 
-        // set toolbar
-        ActionBar actionBar = getSupportActionBar();
-        try {
-            actionBar.setTitle("Login");
-            //actionBar.setDisplayHomeAsUpEnabled(true);
-        } catch (Exception e){ e.printStackTrace(); }
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mAuth = FirebaseAuth.getInstance();
 
         //testing with email and password as "admin" and "admin"
-        //MaterialButton submitButtonLogInPage = (MaterialButton) findViewById(R.id.submitButtonLogInPage);
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(emailLogIn.getText().toString().equals("admin") && passwordLogIn.getText().toString().equals("admin")){
-                    //correct
-                    Toast.makeText(MainActivity.this, "LOGIN SUCCESSFUL", Toast.LENGTH_SHORT).show();
-                    openHomePage();
-                }else {
-                    //incorrect
-                    Toast.makeText(MainActivity.this, "INCORRECT LOGIN, PLEASE RE-ENTER", Toast.LENGTH_SHORT).show();
-                }
+                loginUser();
             }
         });
 
-        //mAuth = FirebaseAuth.getInstance();
-
-
         //Sign Up Link
-
         signUpLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 openFirstTimeSignUpPage();
             }
         });
+
+        // go to forgot password screen
+        forgotPasswordToggle.setOnClickListener(view -> startActivity(new Intent(this, ResetPasswordActivity.class)));
     }
     private void loginUser(){
         String password = passwordLogIn.getText().toString();
@@ -88,41 +75,51 @@ public class MainActivity extends AppCompatActivity {
             passwordLogIn.setError("Password cannot be empty");
             passwordLogIn.requestFocus();
         }else if (TextUtils.isEmpty(email)){
-            emailLogIn.setError("Username cannot be empty");
+            emailLogIn.setError("Email cannot be empty");
             emailLogIn.requestFocus();
         }else{
-            startActivity(new Intent(MainActivity.this, HomePage.class));
-/*            mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+
+           mAuth.signInWithEmailAndPassword(email, password)
+                   .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if(task.isSuccessful()){
-                        Toast.makeText(MainActivity.this, "Log in successful", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(MainActivity.this, MainActivity.class)); //idk if second param is correct
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d("MainActivity", "signInWithEmail:success");
+                        user = mAuth.getCurrentUser();
+                        openHomePage(user);
                     }else{
-                        Toast.makeText(MainActivity.this, "Log in Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        // If sign in fails, display a message to the user.
+                        Log.w("MainActivity", "signInWithEmail:failure", task.getException());
+                        Toast.makeText(MainActivity.this, "Account doesn't exist..",
+                                Toast.LENGTH_SHORT).show();
                     }
                 }
-            });*/
+            });
+
+
         }
     }
 
     @Override
     protected void onStart(){
         super.onStart();
-/*        FirebaseUser user = mAuth.getCurrentUser();
-        if (user == null){
-            startActivity(new Intent(MainActivity.this, MainActivity.class)); //idk if second param is correct
-        }*/
+        // Check if user is signed in (non-null) and update UI accordingly.
+       //FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null){
+            startActivity(new Intent(MainActivity.this, HomePage.class));
+        }
     }
 
 
-    //Can i use "intent" for all of these???
-    public void openHomePage(){
-        Intent intent = new Intent(this, HomePage.class);
-        startActivity(intent);
+    private void openHomePage(FirebaseUser user){
+        if (user != null) {
+            Intent intent = new Intent(this, HomePage.class);
+            startActivity(intent);
+        }
     }
 
-    public void openFirstTimeSignUpPage(){
+    private void openFirstTimeSignUpPage(){
         Intent intent = new Intent(this, FirstTimeSignUp.class);
         startActivity(intent);
     }

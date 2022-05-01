@@ -28,7 +28,7 @@ public class GettingStarted extends AppCompatActivity {
 
     TextView usernameEntry;
 
-    FirebaseAuth mAuth = null;
+    private FirebaseAuth mAuth = null;
     EditText ageEntryChoice;
     EditText heightEntryChoice;
     EditText currentWeightEntryChoice;
@@ -60,7 +60,7 @@ public class GettingStarted extends AppCompatActivity {
         goalWeightEntryChoice = (EditText) findViewById(R.id.goalWeightEntry);
         submitButtonGettingStartedPage = (MaterialButton) findViewById(R.id.submitButtonGettingStartedPage);
 
-        //mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         //Spinners
         Spinner sexSpinner = (Spinner) findViewById(R.id.sexDropDown);

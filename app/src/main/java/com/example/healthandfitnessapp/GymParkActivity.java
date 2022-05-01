@@ -64,6 +64,24 @@ public class GymParkActivity extends AppCompatActivity {
         horizontalDecoration.setDrawable(horizontalDivider);
         recyclerView.addItemDecoration(horizontalDecoration);
 
+        // on page load
+        googlePlacesAPI.nearbyGymSearch(new GooglePlacesAPI.FetchGymsParkCallback() {
+            @Override
+            public void onResponse(List<StoreModel> list) {
+                gymsList = list;
+
+                // update the adapter with new stores
+                adapter.setItems(list);
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(getApplicationContext(), "Error: " + message, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
         // onclick on find park button
         findParkBtn.setOnClickListener(view -> {
             infoTextView.setText("Parks : ");

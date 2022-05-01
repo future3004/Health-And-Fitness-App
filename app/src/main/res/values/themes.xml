@@ -18,7 +18,6 @@
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryDark">@color/purple_700</item>
         <item name="colorAccent">@color/white</item>
-        <item name="alertDialogTheme">@style/Theme.AppCompat.Dialog.Alert</item>
     </style>
 
     <style name="ThemeOverlay.MaterialComponents.Toolbar.Primary.AppTheme" parent="Theme.AppCompat.Light.NoActionBar">

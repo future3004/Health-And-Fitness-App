@@ -46,7 +46,7 @@ public class MealListAdapter extends ArrayAdapter<CurrentDayModel> {
 
                 if (imageUrl.matches("")) {
                     Glide.with(context)
-                            .load(R.drawable.food_placeholder)
+                            .load(R.drawable.food)
                             .into(imageView);
                 } else {
                     Glide.with(context)
@@ -65,5 +65,9 @@ public class MealListAdapter extends ArrayAdapter<CurrentDayModel> {
     @Override
     public int getCount() {
         return list.size();
+    }
+
+    public void setList(ArrayList<CurrentDayModel> list) {
+        this.list = list;
     }
 }

@@ -91,6 +91,7 @@ public class GroceryStoresActivity extends AppCompatActivity implements Location
         // places api provider
         final GooglePlacesAPI googlePlacesAPI = new GooglePlacesAPI(GroceryStoresActivity.this);
 
+
         // ask for user to use their location
         if (ActivityCompat.checkSelfPermission(
                 this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
@@ -104,22 +105,6 @@ public class GroceryStoresActivity extends AppCompatActivity implements Location
         // get user location
         getLocation();
 
-/*        groceryStoresList = new ArrayList<>();
-        groceryStoresList.add(new StoreModel("google", "Walmart", "4.4",
-                "8550 Tom Landry Fwy", "Open"));
-        groceryStoresList.add(new StoreModel("google", "ALDI", "4.9",
-                "8550 Tom Landry Fwy", "Open"));
-        groceryStoresList.add(new StoreModel("google", "Target Grocery", "4.2",
-                "8550 Tom Landry Fwy", "Closed"));
-        groceryStoresList.add(new StoreModel("google", "Costco", "5",
-                "8550 Tom Landry Fwy", "Open"));
-        groceryStoresList.add(new StoreModel("google", "Wincos", "4.8",
-                "8550 Tom Landry Fwy", "Closed"));
-                */
-        // initial ui load
-        //Toast.makeText(getApplicationContext(), "Grocery stores in " + userCity, Toast.LENGTH_SHORT).show();
-        String city = "Arlington";
-
         adapter = new GroceryStoresRecycleViewAdapter(GroceryStoresActivity.this, groceryStoresList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -132,6 +117,23 @@ public class GroceryStoresActivity extends AppCompatActivity implements Location
         assert horizontalDivider != null;
         horizontalDecoration.setDrawable(horizontalDivider);
         recyclerView.addItemDecoration(horizontalDecoration);
+
+        // on page load
+        googlePlacesAPI.nearbySearch(new GooglePlacesAPI.FetchGymsParkCallback() {
+            @Override
+            public void onResponse(List<StoreModel> list) {
+                groceryStoresList = list;
+
+                // update the adapter with new stores
+                adapter.setItems(list);
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onError(String message) {
+                Toast.makeText(getApplicationContext(), "Error: " + message, Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
         searchBtn.setOnClickListener(new View.OnClickListener() {

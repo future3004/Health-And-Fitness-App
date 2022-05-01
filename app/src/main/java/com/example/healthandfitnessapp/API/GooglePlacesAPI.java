@@ -185,9 +185,120 @@ public class GooglePlacesAPI {
 
     }
 
+    public void nearbySearch(FetchGymsParkCallback callback) {
+        String PLACE_API_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=32.7344%2C-97.14&radius=3000&type="+ whatQuery + "&key="+ API_KEY;
+
+        List<StoreModel> storesList = new ArrayList<>();
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
+                PLACE_API_URL,
+                null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+                try {
+                    // get the array with recipe info
+                    JSONArray jsonArray = response.getJSONArray("results");
 
 
+                    for(int i=0; i < jsonArray.length(); i++) {
 
+                        StoreModel storeModel = new StoreModel();
+                        JSONObject store = jsonArray.getJSONObject(i);
+
+                        //Log.i("Photo ref_google-api: ", store.getJSONArray("photos").getJSONObject(0).getString("photo_reference"));
+
+
+/*                        String photo_ref = store.getJSONArray("photos").getJSONObject(0).getString("photo_reference");
+                        if (photo_ref.matches("")) photo_ref = "Aap_uECqZiCinEDIPnh1tlbvju3OjqbLU9KaNRTABOLJrMJyROk0aR96nBXmVbdw1tSvFOadd8HUZoSRS-9Sers0KPa8qDC8xs2n2JUn_bzL3WbWcxbGwoRtaZDukne_qYJ33Got-hsQiZGwrKBrrJ4UNZbi_ymk2TItWTfIoYXUT7mTQaWP";
+                        storeModel.setPhotoReference(photo_ref);*/
+
+                        storeModel.setPhotoReference("Aap_uECqZiCinEDIPnh1tlbvju3OjqbLU9KaNRTABOLJrMJyROk0aR96nBXmVbdw1tSvFOadd8HUZoSRS-9Sers0KPa8qDC8xs2n2JUn_bzL3WbWcxbGwoRtaZDukne_qYJ33Got-hsQiZGwrKBrrJ4UNZbi_ymk2TItWTfIoYXUT7mTQaWP");
+                        storeModel.setStoreName(store.getString("name"));
+                        storeModel.setStoreRating(store.getString("rating"));
+                        storeModel.setStoreAddress(store.getString("vicinity"));
+                        storeModel.setStoreOpenClose(store.getJSONObject("opening_hours").getBoolean("open_now"));
+
+                        storesList.add(storeModel);
+                    }
+
+                    callback.onResponse(storesList);
+
+                } catch (Exception e) {
+                    callback.onError(e.getMessage());
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                callback.onError(error.toString());
+            }
+        });
+
+        // Add this request to RequestQueue
+        VolleyQueueSingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+    public void nearbyGymSearch(FetchGymsParkCallback callback) {
+        String PLACE_API_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=32.7344%2C-97.14&radius=3000&type=gym&key="+ API_KEY;
+
+        List<StoreModel> storesList = new ArrayList<>();
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
+                PLACE_API_URL,
+                null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+                try {
+                    // get the array with recipe info
+                    JSONArray jsonArray = response.getJSONArray("results");
+
+
+                    for(int i=0; i < jsonArray.length(); i++) {
+
+                        StoreModel storeModel = new StoreModel();
+                        JSONObject store = jsonArray.getJSONObject(i);
+
+                        //Log.i("Photo ref_google-api: ", store.getJSONArray("photos").getJSONObject(0).getString("photo_reference"));
+
+                        String photo_ref = store.getJSONArray("photos").getJSONObject(0).getString("photo_reference");
+                        if (photo_ref.isEmpty()) photo_ref = "Aap_uECqZiCinEDIPnh1tlbvju3OjqbLU9KaNRTABOLJrMJyROk0aR96nBXmVbdw1tSvFOadd8HUZoSRS-9Sers0KPa8qDC8xs2n2JUn_bzL3WbWcxbGwoRtaZDukne_qYJ33Got-hsQiZGwrKBrrJ4UNZbi_ymk2TItWTfIoYXUT7mTQaWP";
+                        storeModel.setPhotoReference(photo_ref);
+
+                        //storeModel.setPhotoReference("Aap_uECqZiCinEDIPnh1tlbvju3OjqbLU9KaNRTABOLJrMJyROk0aR96nBXmVbdw1tSvFOadd8HUZoSRS-9Sers0KPa8qDC8xs2n2JUn_bzL3WbWcxbGwoRtaZDukne_qYJ33Got-hsQiZGwrKBrrJ4UNZbi_ymk2TItWTfIoYXUT7mTQaWP");
+                        storeModel.setStoreName(store.getString("name"));
+                        storeModel.setStoreRating(store.getString("rating"));
+                        storeModel.setStoreAddress(store.getString("vicinity"));
+                        storeModel.setStoreOpenClose(store.getJSONObject("opening_hours").getBoolean("open_now"));
+
+                        storesList.add(storeModel);
+                    }
+
+                    callback.onResponse(storesList);
+
+                } catch (Exception e) {
+                    callback.onError(e.getMessage());
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                callback.onError(error.toString());
+            }
+        });
+
+        // Add this request to RequestQueue
+        VolleyQueueSingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+
+   //https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=-33.8670522%2C151.1957362&radius=1500&type=restaurant&keyword=cruise&key=AIzaSyCq_l8CRNgCkyuSSkHMxBDv6f0x5AAHzik
+   // https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=-33.8670522%2C151.1957362&radius=1500&type=restaurant&key=AIzaSyCq_l8CRNgCkyuSSkHMxBDv6f0x5AAHzik
 
 
 
