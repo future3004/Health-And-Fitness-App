@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.example.healthandfitnessapp.CurrentDayActivity;
 import com.example.healthandfitnessapp.Models.CurrentDayModel;
 import com.example.healthandfitnessapp.R;
 
@@ -72,9 +73,37 @@ public class CustomDialog extends Dialog implements View.OnClickListener {
             String qty = dialog_subValue.getText().toString().trim();
             int calories = Integer.parseInt(calorieValue.getText().toString());
             if (!meal.matches("") || !qty.matches("")) {
-                CurrentDayModel newItem = new CurrentDayModel(meal,
-                        qty, calories, "");
-                // save newItem to db
+
+                CurrentDayModel newItem;
+
+                if (dialogTitle.matches("Add Breakfast Meal")) {
+                    // meal is breakfast
+                    newItem = new CurrentDayModel(meal,
+                            qty, calories, "https://rkmsite.s3.us-east-2.amazonaws.com/assets/breakfast.jpg");
+                    // save newItem to db
+                    CurrentDayActivity.saveBreakfastMealToDb(newItem);
+
+                } else if (dialogTitle.matches("Add Lunch Meal")) {
+                    // meal is lunch
+                    newItem = new CurrentDayModel(meal,
+                            qty, calories, "https://rkmsite.s3.us-east-2.amazonaws.com/assets/lunch.png");
+                    // save newItem to db
+                    CurrentDayActivity.saveLunchMealToDb(newItem);
+
+                } else if (dialogTitle.matches("Add Dinner Meal")) {
+                    // meal is dinner
+                    newItem = new CurrentDayModel(meal,
+                            qty, calories, "https://rkmsite.s3.us-east-2.amazonaws.com/assets/dinner.png");
+                    // save newItem to db
+                    CurrentDayActivity.saveDinnerMealToDb(newItem);
+                } else {
+                    // its exercise item
+                    newItem = new CurrentDayModel(meal, qty,
+                            calories,"");
+                    // save newItem to db
+                    CurrentDayActivity.saveExerciseItem(newItem);
+                }
+
                 list.add(newItem);
             }
 

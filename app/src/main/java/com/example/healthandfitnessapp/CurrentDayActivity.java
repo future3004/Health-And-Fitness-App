@@ -1,12 +1,17 @@
 package com.example.healthandfitnessapp;
 
+import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -14,12 +19,24 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.healthandfitnessapp.Controllers.CurrentListAdapter;
 import com.example.healthandfitnessapp.Controllers.ExerciseListAdapter;
 import com.example.healthandfitnessapp.Controllers.MealListAdapter;
 import com.example.healthandfitnessapp.Models.CurrentDayModel;
 import com.example.healthandfitnessapp.Util.CustomDialog;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,6 +69,10 @@ public class CurrentDayActivity extends AppCompatActivity {
     public int exerciseCaloriesBurnt = 0;
     public int calorieGoal = 2500;
 
+    private FirebaseAuth auth = null;
+    private static FirebaseUser user = null;
+    private static FirebaseDatabase firebaseDatabase = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +103,12 @@ public class CurrentDayActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         } catch (Exception e){ e.printStackTrace(); }
 
+        // initialize firebase
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+
+
         // set today date
         //"Today: Tues, Dec 31"
         //E.dd.LLL.yyyy HH:mm:ss aaa z
@@ -90,73 +117,8 @@ public class CurrentDayActivity extends AppCompatActivity {
         String dateTime = simpleDateFormat.format(calendar.getTime()).toString();
         dateTextView.setText("Today: " + dateTime);
 
-        // breakfast listView
-        breakfastItems = new ArrayList<>();
-        breakfastItems.add(new CurrentDayModel("Coffee, w/ Skim milk", "8 fluid ounces",
-                100,
-                "https://static01.nyt.com/images/2019/02/05/world/05egg/15xp-egg-promo-jumbo-v2.jpg?quality=75&auto=webp"));
-        breakfastItems.add(new CurrentDayModel("Scrambled Eggs", "2", 50,
-                "https://static01.nyt.com/images/2019/02/05/world/05egg/15xp-egg-promo-jumbo-v2.jpg?quality=75&auto=webp"));
-        breakfastAdapter = new MealListAdapter(getApplicationContext(), breakfastItems);
-        breakfastListView.setAdapter(breakfastAdapter);
-        breakfastListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //Toast.makeText(getApplicationContext(),"Remove at: " + i,Toast.LENGTH_SHORT).show();
-                removeItem(breakfastItems, breakfastAdapter, i);
 
-                return false;
-            }
-        });
-        // calculate calories
-        for (CurrentDayModel i: breakfastItems) {
-            breakFastCalories += i.getCaloriesPlusMinus();
-        }
-        breakFastTxt.setText("Breakfast: " + breakFastCalories);
-
-        // lunch listView
-        lunchItems = new ArrayList<>();
-        lunchItems.add(new CurrentDayModel("Stew", "quarter pound", 300,
-                "https://static01.nyt.com/images/2019/02/05/world/05egg/15xp-egg-promo-jumbo-v2.jpg?quality=75&auto=webp"));
-
-        lunchAdapter = new MealListAdapter(getApplicationContext(), lunchItems);
-        lunchListView.setAdapter(lunchAdapter);
-        lunchListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //Toast.makeText(getApplicationContext(),"Remove at: " + i,Toast.LENGTH_SHORT).show();
-                removeItem(lunchItems, lunchAdapter, i);
-
-                return false;
-            }
-        });
-        // calculate calories
-        for (CurrentDayModel i: lunchItems) {
-            lunchCalories += i.getCaloriesPlusMinus();
-        }
-        lunchTxt.setText("Lunch: " + lunchCalories);
-
-        // dinner listView
-        dinnerItems = new ArrayList<>();
-        dinnerItems.add(new CurrentDayModel("Spaghetti", "small", 200, ""));
-        dinnerAdapter = new MealListAdapter(getApplicationContext(), dinnerItems);
-        dinnerListView.setAdapter(dinnerAdapter);
-        dinnerListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //Toast.makeText(getApplicationContext(),"Remove at: " + i,Toast.LENGTH_SHORT).show();
-                removeItem(dinnerItems, dinnerAdapter, i);
-
-                return false;
-            }
-        });
-        // calculate calories
-        for (CurrentDayModel i: dinnerItems) {
-            dinnerCalories += i.getCaloriesPlusMinus();
-        }
-        dinnerTxt.setText("Dinner: " + dinnerCalories);
-
-        // exercise listView
+        // initialize listViews
         exerciseListInit();
 
 
@@ -202,6 +164,11 @@ public class CurrentDayActivity extends AppCompatActivity {
 
         // initialize the calories card method
         caloriesCardInit();
+
+        //readMealObject();
+        getBreakfastMeal(); // this one works
+        readMealObject();
+
     }
 
     private void caloriesCardInit() {
@@ -241,6 +208,78 @@ public class CurrentDayActivity extends AppCompatActivity {
         //listView.setAdapter(adapter);
     }
 
+    private void breakfastListInit() {
+        // breakfast listView
+        breakfastItems = new ArrayList<>();
+        breakfastItems.add(new CurrentDayModel("Coffee, w/ Skim milk", "8 fluid ounces",
+                100,
+                "https://rkmsite.s3.us-east-2.amazonaws.com/assets/breakfast.jpg"));
+        breakfastAdapter = new MealListAdapter(getApplicationContext(), breakfastItems);
+        breakfastListView.setAdapter(breakfastAdapter);
+        breakfastListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //Toast.makeText(getApplicationContext(),"Remove at: " + i,Toast.LENGTH_SHORT).show();
+                removeItem(breakfastItems, breakfastAdapter, i);
+
+                return false;
+            }
+        });
+        // calculate calories
+        for (CurrentDayModel i: breakfastItems) {
+            breakFastCalories += i.getCaloriesPlusMinus();
+        }
+        breakFastTxt.setText("Breakfast: " + breakFastCalories);
+    }
+
+    private void lunchListInit() {
+        // lunch listView
+        lunchItems = new ArrayList<>();
+        lunchItems.add(new CurrentDayModel("Stew", "quarter pound", 300,
+                "https://rkmsite.s3.us-east-2.amazonaws.com/assets/lunch.png"));
+
+        lunchAdapter = new MealListAdapter(getApplicationContext(), lunchItems);
+        lunchListView.setAdapter(lunchAdapter);
+        lunchListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //Toast.makeText(getApplicationContext(),"Remove at: " + i,Toast.LENGTH_SHORT).show();
+                removeItem(lunchItems, lunchAdapter, i);
+
+                return false;
+            }
+        });
+        // calculate calories
+        for (CurrentDayModel i: lunchItems) {
+            lunchCalories += i.getCaloriesPlusMinus();
+        }
+        lunchTxt.setText("Lunch: " + lunchCalories);
+
+    }
+
+    private void dinnerListInit() {
+        // dinner listView
+        dinnerItems = new ArrayList<>();
+        dinnerItems.add(new CurrentDayModel("Spaghetti", "small", 200,
+                "https://rkmsite.s3.us-east-2.amazonaws.com/assets/dinner.png"));
+        dinnerAdapter = new MealListAdapter(getApplicationContext(), dinnerItems);
+        dinnerListView.setAdapter(dinnerAdapter);
+        dinnerListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //Toast.makeText(getApplicationContext(),"Remove at: " + i,Toast.LENGTH_SHORT).show();
+                removeItem(dinnerItems, dinnerAdapter, i);
+
+                return false;
+            }
+        });
+        // calculate calories
+        for (CurrentDayModel i: dinnerItems) {
+            dinnerCalories += i.getCaloriesPlusMinus();
+        }
+        dinnerTxt.setText("Dinner: " + dinnerCalories);
+    }
+
     private void exerciseListInit() {
 
         exerciseItems = new ArrayList<>();
@@ -268,4 +307,105 @@ public class CurrentDayActivity extends AppCompatActivity {
             }
         });
     }
+
+    public static void saveBreakfastMealToDb(CurrentDayModel newMeal) {
+        DatabaseReference mDatabase = firebaseDatabase.getReference();
+
+        if (user != null) {
+            String userId = user.getUid();
+
+            mDatabase.child("users").child(userId).child("breakfast").push().setValue(newMeal);
+        }
+    }
+
+    public static void saveLunchMealToDb(CurrentDayModel newMeal) {
+        DatabaseReference mDatabase = firebaseDatabase.getReference();
+
+        if (user != null) {
+            String userId = user.getUid();
+
+            mDatabase.child("users").child(userId).child("lunch").push().setValue(newMeal);
+        }
+    }
+
+    public static void saveDinnerMealToDb(CurrentDayModel newMeal) {
+        DatabaseReference mDatabase = firebaseDatabase.getReference();
+
+        if (user != null) {
+            String userId = user.getUid();
+
+            mDatabase.child("users").child(userId).child("dinner").push().setValue(newMeal);
+        }
+    }
+
+    public static void saveExerciseItem(CurrentDayModel newExercise) {
+        DatabaseReference mDatabase = firebaseDatabase.getReference();
+
+        if (user != null) {
+            String userId = user.getUid();
+
+            mDatabase.child("users").child(userId).child("exercise").push().setValue(newExercise);
+        }
+    }
+
+    private void getBreakfastMeal() {
+        DatabaseReference mDatabase = firebaseDatabase.getReference();
+        if (user != null ) {
+            String userId = user.getUid();
+            mDatabase.child("users").child(userId).child("breakfast").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DataSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        Log.d("CurrentDay_firebase", String.valueOf(task.getResult().getValue()));
+
+                    } else {
+                        Log.e("firebase", "Error getting data", task.getException());
+                    }
+                }
+            });
+        }
+    }
+
+    private void readMealObject(){
+        // get current user profile info
+        if (user != null) {
+            String userId = user.getUid();
+
+            ValueEventListener mealListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // Get CurrentDay meal object and use the values to update the UI
+                    if (dataSnapshot.getChildren().iterator().hasNext()) {
+
+                        CurrentDayModel meal = dataSnapshot.getValue(CurrentDayModel.class);
+                        String title = meal.getTitle();
+                        String extraInfo = meal.getExtraInfo();
+                        int caloriesPlusMinus = meal.getCaloriesPlusMinus();
+                        String imageUrl = meal.getImageUrl();
+
+                        Log.d("CurrentDay_firebase", meal.toString());
+
+                        //Toast.makeText(CurrentDayActivity.this, "title: " + title + " : " + caloriesPlusMinus, Toast.LENGTH_LONG).show();
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // Getting Post failed, log a message
+                    Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
+                }
+            };
+
+            firebaseDatabase.getReference("users/" + userId + "lunch").addValueEventListener(mealListener);
+
+
+        } else {
+            // no current user instance
+            Log.d("CurrentDayActivity", "Can't get user profile info, no user instance.");
+        }
+
+    }
+
+
 }

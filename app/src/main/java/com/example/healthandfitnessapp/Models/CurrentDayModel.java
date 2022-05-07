@@ -6,6 +6,10 @@ public class CurrentDayModel {
     private int caloriesPlusMinus;
     private String imageUrl;
 
+    public CurrentDayModel() {
+        // Default constructor required for calls to DataSnapshot.getValue(CurrentDayModel.class)}
+    }
+
     public CurrentDayModel(String title, String extraInfo,
                            int caloriesPlusMinus, String imageUrl) {
         this.title = title;
@@ -44,5 +48,15 @@ public class CurrentDayModel {
 
     public void setCaloriesPlusMinus(int caloriesPlusMinus) {
         this.caloriesPlusMinus = caloriesPlusMinus;
+    }
+
+    @Override
+    public String toString() {
+        return "CurrentDayModel{" +
+                "title='" + title + '\'' +
+                ", extraInfo='" + extraInfo + '\'' +
+                ", caloriesPlusMinus=" + caloriesPlusMinus +
+                ", imageUrl='" + imageUrl + '\'' +
+                '}';
     }
 }
