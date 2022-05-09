@@ -63,11 +63,11 @@ public class CurrentDayActivity extends AppCompatActivity {
     private ArrayList<CurrentDayModel> breakfastItems;
     private MealListAdapter breakfastAdapter = null;
 
-    public int breakFastCalories = 0;
-    public int lunchCalories = 0;
-    public int dinnerCalories = 0;
-    public int exerciseCaloriesBurnt = 0;
-    public int calorieGoal = 2500;
+    int breakFastCalories = 0;
+    int lunchCalories = 0;
+    int dinnerCalories = 0;
+    int exerciseCaloriesBurnt = 0;
+    int calorieGoal = 2500;
 
     private FirebaseAuth auth = null;
     private static FirebaseUser user = null;
@@ -119,6 +119,9 @@ public class CurrentDayActivity extends AppCompatActivity {
 
 
         // initialize listViews
+        breakfastListInit();
+        lunchListInit();
+        dinnerListInit();
         exerciseListInit();
 
 
@@ -165,34 +168,36 @@ public class CurrentDayActivity extends AppCompatActivity {
         // initialize the calories card method
         caloriesCardInit();
 
-        //readMealObject();
-        getBreakfastMeal(); // this one works
-        readMealObject();
-
     }
 
     private void caloriesCardInit() {
 
-        goalCalorieTxt.setText("" + calorieGoal);
-        int caloriesNow = breakFastCalories + lunchCalories + dinnerCalories;
-        caloriesCountTxt.setText(""+ caloriesNow);
-        exerciseCaloriesTxt.setText(""+ exerciseCaloriesBurnt);
+        try {
+            goalCalorieTxt.setText("" + calorieGoal);
+            int caloriesNow = breakFastCalories + lunchCalories + dinnerCalories;
+            caloriesCountTxt.setText(""+ caloriesNow);
+            exerciseCaloriesTxt.setText(""+ exerciseCaloriesBurnt);
 
-        int minusExercise = caloriesNow - exerciseCaloriesBurnt;
-        int overUnder = calorieGoal - minusExercise;
+            int minusExercise = caloriesNow - exerciseCaloriesBurnt;
+            int overUnder = calorieGoal - minusExercise;
 
-        if (overUnder > 0) {
-            // user still under calories goal for day
-            calorieStatusTxt.setText("UNDER");
-            calorieStatusTxt.setTextColor(Color.GREEN);
-        } else {
-            // user exceeded calorie goal intake
-            calorieStatusTxt.setText("OVER");
-            calorieStatusTxt.setTextColor(Color.RED);
+            if (overUnder > 0) {
+                // user still under calories goal for day
+                calorieStatusTxt.setText("UNDER");
+                calorieStatusTxt.setTextColor(Color.GREEN);
+            } else {
+                // user exceeded calorie goal intake
+                calorieStatusTxt.setText("OVER");
+                calorieStatusTxt.setTextColor(Color.RED);
+            }
+            calorieBankTxt.setText(""+ overUnder);
+            progressIndicator.setMax(calorieGoal);
+            progressIndicator.setProgress(calorieGoal/minusExercise);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        calorieBankTxt.setText(""+ overUnder);
-        progressIndicator.setMax(calorieGoal);
-        progressIndicator.setProgress(calorieGoal/minusExercise);
+
+
     }
 
     public static void removeItem(ArrayList<CurrentDayModel> list, MealListAdapter adapter,
@@ -211,11 +216,51 @@ public class CurrentDayActivity extends AppCompatActivity {
     private void breakfastListInit() {
         // breakfast listView
         breakfastItems = new ArrayList<>();
-        breakfastItems.add(new CurrentDayModel("Coffee, w/ Skim milk", "8 fluid ounces",
+/*        breakfastItems.add(new CurrentDayModel("Coffee, w/ Skim milk", "8 fluid ounces",
                 100,
-                "https://rkmsite.s3.us-east-2.amazonaws.com/assets/breakfast.jpg"));
+                "https://rkmsite.s3.us-east-2.amazonaws.com/assets/breakfast.jpg"));*/
+
+        // read data from firebase
+        DatabaseReference mDatabase = firebaseDatabase.getReference();
+        if (user != null ) {
+            String userId = user.getUid();
+            //String key = mDatabase.child("users").child(userId).child("breakfast").getKey();
+            try {
+                mDatabase.child("users").child(userId).child("breakfast")
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d("CurrentDay_firebase", String.valueOf(task.getResult().getValue()));
+
+                                    for (DataSnapshot dataSnapshot: task.getResult().getChildren()) {
+                                        CurrentDayModel meal = dataSnapshot.getValue(CurrentDayModel.class);
+                                        String title = meal.getTitle();
+                                        String extraInfo = meal.getExtraInfo();
+                                        int caloriesPlusMinus = meal.getCaloriesPlusMinus();
+                                        String imageUrl = meal.getImageUrl();
+
+                                        breakFastCalories = breakFastCalories + caloriesPlusMinus;
+
+                                        breakfastItems.add(new CurrentDayModel(title, extraInfo, caloriesPlusMinus, imageUrl));
+                                    }
+
+                                } else {
+                                    Log.e("firebase", "Error getting data", task.getException());
+                                }
+                            }
+                        });
+            } catch (Exception e) {e.printStackTrace();}
+
+        }
+
+        // set up adapter
         breakfastAdapter = new MealListAdapter(getApplicationContext(), breakfastItems);
         breakfastListView.setAdapter(breakfastAdapter);
+
+        breakFastTxt.setText("Breakfast: " + breakFastCalories);
+
         breakfastListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -225,18 +270,45 @@ public class CurrentDayActivity extends AppCompatActivity {
                 return false;
             }
         });
-        // calculate calories
-        for (CurrentDayModel i: breakfastItems) {
-            breakFastCalories += i.getCaloriesPlusMinus();
-        }
-        breakFastTxt.setText("Breakfast: " + breakFastCalories);
+
     }
 
     private void lunchListInit() {
         // lunch listView
         lunchItems = new ArrayList<>();
-        lunchItems.add(new CurrentDayModel("Stew", "quarter pound", 300,
-                "https://rkmsite.s3.us-east-2.amazonaws.com/assets/lunch.png"));
+
+        // read data from firebase
+        DatabaseReference mDatabase = firebaseDatabase.getReference();
+        if (user != null ) {
+            String userId = user.getUid();
+            //String key = mDatabase.child("users").child(userId).child("breakfast").getKey();
+            try {
+                mDatabase.child("users").child(userId).child("lunch")
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d("CurrentDay_firebase", String.valueOf(task.getResult().getValue()));
+
+                                    for (DataSnapshot dataSnapshot: task.getResult().getChildren()) {
+                                        CurrentDayModel meal = dataSnapshot.getValue(CurrentDayModel.class);
+                                        String title = meal.getTitle();
+                                        String extraInfo = meal.getExtraInfo();
+                                        int caloriesPlusMinus = meal.getCaloriesPlusMinus();
+                                        String imageUrl = meal.getImageUrl();
+
+                                        lunchItems.add(new CurrentDayModel(title, extraInfo, caloriesPlusMinus, imageUrl));
+                                    }
+
+                                } else {
+                                    Log.e("firebase", "Error getting data", task.getException());
+                                }
+                            }
+                        });
+            } catch (Exception e) {e.printStackTrace();}
+
+        }
 
         lunchAdapter = new MealListAdapter(getApplicationContext(), lunchItems);
         lunchListView.setAdapter(lunchAdapter);
@@ -260,8 +332,40 @@ public class CurrentDayActivity extends AppCompatActivity {
     private void dinnerListInit() {
         // dinner listView
         dinnerItems = new ArrayList<>();
-        dinnerItems.add(new CurrentDayModel("Spaghetti", "small", 200,
-                "https://rkmsite.s3.us-east-2.amazonaws.com/assets/dinner.png"));
+
+        // read data from firebase
+        DatabaseReference mDatabase = firebaseDatabase.getReference();
+        if (user != null ) {
+            String userId = user.getUid();
+            //String key = mDatabase.child("users").child(userId).child("breakfast").getKey();
+            try {
+                mDatabase.child("users").child(userId).child("dinner")
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d("CurrentDay_firebase", String.valueOf(task.getResult().getValue()));
+
+                                    for (DataSnapshot dataSnapshot: task.getResult().getChildren()) {
+                                        CurrentDayModel meal = dataSnapshot.getValue(CurrentDayModel.class);
+                                        String title = meal.getTitle();
+                                        String extraInfo = meal.getExtraInfo();
+                                        int caloriesPlusMinus = meal.getCaloriesPlusMinus();
+                                        String imageUrl = meal.getImageUrl();
+
+                                        dinnerItems.add(new CurrentDayModel(title, extraInfo, caloriesPlusMinus, imageUrl));
+                                    }
+
+                                } else {
+                                    Log.e("firebase", "Error getting data", task.getException());
+                                }
+                            }
+                        });
+            } catch (Exception e) {e.printStackTrace();}
+
+        }
+
         dinnerAdapter = new MealListAdapter(getApplicationContext(), dinnerItems);
         dinnerListView.setAdapter(dinnerAdapter);
         dinnerListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -283,16 +387,46 @@ public class CurrentDayActivity extends AppCompatActivity {
     private void exerciseListInit() {
 
         exerciseItems = new ArrayList<>();
-        exerciseItems.add(new CurrentDayModel("Swimming", "25 minutes",
+/*        exerciseItems.add(new CurrentDayModel("Swimming", "25 minutes",
                 250,""));
         exerciseItems.add(new CurrentDayModel("Cross Country Run", "120 minutes",
-                300,""));
+                300,""));*/
 
-        // calculate calories
-        for (CurrentDayModel i: exerciseItems) {
-            exerciseCaloriesBurnt += i.getCaloriesPlusMinus();
-        }
+
         //exerciseCaloriesTxt.setText(exerciseCaloriesBurnt);
+
+        // read data from firebase
+        DatabaseReference mDatabase = firebaseDatabase.getReference();
+        if (user != null ) {
+            String userId = user.getUid();
+            //String key = mDatabase.child("users").child(userId).child("breakfast").getKey();
+            try {
+                mDatabase.child("users").child(userId).child("exercise")
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d("CurrentDay_firebase", String.valueOf(task.getResult().getValue()));
+
+                                    for (DataSnapshot dataSnapshot: task.getResult().getChildren()) {
+                                        CurrentDayModel meal = dataSnapshot.getValue(CurrentDayModel.class);
+                                        String title = meal.getTitle();
+                                        String extraInfo = meal.getExtraInfo();
+                                        int caloriesPlusMinus = meal.getCaloriesPlusMinus();
+                                        String imageUrl = meal.getImageUrl();
+
+                                        exerciseItems.add(new CurrentDayModel(title, extraInfo, caloriesPlusMinus, imageUrl));
+                                    }
+
+                                } else {
+                                    Log.e("firebase", "Error getting data", task.getException());
+                                }
+                            }
+                        });
+            } catch (Exception e) {e.printStackTrace();}
+
+        }
 
 
         exerciseAdapter = new ExerciseListAdapter(CurrentDayActivity.this, exerciseItems);
@@ -306,6 +440,11 @@ public class CurrentDayActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        // calculate calories
+        for (CurrentDayModel i: exerciseItems) {
+            exerciseCaloriesBurnt += i.getCaloriesPlusMinus();
+        }
     }
 
     public static void saveBreakfastMealToDb(CurrentDayModel newMeal) {
@@ -314,7 +453,11 @@ public class CurrentDayActivity extends AppCompatActivity {
         if (user != null) {
             String userId = user.getUid();
 
+            //String key = mDatabase.child("users").child(userId).child("breakfast").push().getKey();
             mDatabase.child("users").child(userId).child("breakfast").push().setValue(newMeal);
+
+            //mDatabase.child("users").child(userId).child("breakfast").push().setValue(newMeal);
+            //mDatabase.child("users").child(userId).child("breakfast").setValue(newMeal);
         }
     }
 
@@ -324,6 +467,7 @@ public class CurrentDayActivity extends AppCompatActivity {
         if (user != null) {
             String userId = user.getUid();
 
+            //String key = mDatabase.child("users").child(userId).child("lunch").push().getKey();
             mDatabase.child("users").child(userId).child("lunch").push().setValue(newMeal);
         }
     }
@@ -334,6 +478,7 @@ public class CurrentDayActivity extends AppCompatActivity {
         if (user != null) {
             String userId = user.getUid();
 
+            //String key = mDatabase.child("users").child(userId).child("dinner").push().getKey();
             mDatabase.child("users").child(userId).child("dinner").push().setValue(newMeal);
         }
     }
@@ -344,6 +489,7 @@ public class CurrentDayActivity extends AppCompatActivity {
         if (user != null) {
             String userId = user.getUid();
 
+            //String key = mDatabase.child("users").child(userId).child("exercise").push().getKey();
             mDatabase.child("users").child(userId).child("exercise").push().setValue(newExercise);
         }
     }
@@ -364,47 +510,6 @@ public class CurrentDayActivity extends AppCompatActivity {
                 }
             });
         }
-    }
-
-    private void readMealObject(){
-        // get current user profile info
-        if (user != null) {
-            String userId = user.getUid();
-
-            ValueEventListener mealListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    // Get CurrentDay meal object and use the values to update the UI
-                    if (dataSnapshot.getChildren().iterator().hasNext()) {
-
-                        CurrentDayModel meal = dataSnapshot.getValue(CurrentDayModel.class);
-                        String title = meal.getTitle();
-                        String extraInfo = meal.getExtraInfo();
-                        int caloriesPlusMinus = meal.getCaloriesPlusMinus();
-                        String imageUrl = meal.getImageUrl();
-
-                        Log.d("CurrentDay_firebase", meal.toString());
-
-                        //Toast.makeText(CurrentDayActivity.this, "title: " + title + " : " + caloriesPlusMinus, Toast.LENGTH_LONG).show();
-                    }
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    // Getting Post failed, log a message
-                    Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
-                }
-            };
-
-            firebaseDatabase.getReference("users/" + userId + "lunch").addValueEventListener(mealListener);
-
-
-        } else {
-            // no current user instance
-            Log.d("CurrentDayActivity", "Can't get user profile info, no user instance.");
-        }
-
     }
 
 
