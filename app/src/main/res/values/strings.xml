@@ -5,4 +5,11 @@
     <string name="goTo_grocery">Find Grocery Stores</string>
     <string name="menu_other">Others</string>
     <string name="lost_pass_info">Enter your email below to receive your\n password reset instructions</string>
+
+
+    <string name="hello_world">Hello world!</string>
+    <string name="date_label_set">Press the button to set the date</string>
+    <string name="date_button_set">Set Date</string>
+    <string name="date_view_set">The Date is: </string>
+    <string name="date_selected"></string>
 </resources>

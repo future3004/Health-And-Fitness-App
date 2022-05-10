@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Gift/AndroidStudioProjects/Health-And-Fitness-App/app/src/main/res/layout/activity_reminders.xml" value="0.11" />
         <entry key="..\:/Users/richa/AndroidStudioProjects/HealthAndFitnessApp/app/src/main/res/drawable/baseline_whatshot_18.xml" value="0.2171875" />
         <entry key="..\:/Users/richa/AndroidStudioProjects/HealthAndFitnessApp/app/src/main/res/drawable/horizontal_divider.xml" value="0.2916666666666667" />
         <entry key="..\:/Users/richa/AndroidStudioProjects/HealthAndFitnessApp/app/src/main/res/drawable/ic_baseline_email_24.xml" value="0.3074074074074074" />
@@ -36,7 +37,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
