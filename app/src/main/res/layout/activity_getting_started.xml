@@ -241,14 +241,15 @@
             android:textSize="20dp"
             android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/goalDatePicker"
+        <TextView
+            android:id="@+id/tvDate"
             style="?android:spinnerStyle"
             android:layout_width="180dp"
             android:layout_height="58dp"
             android:layout_below="@+id/typeOfGoalText"
             android:layout_toEndOf="@+id/goalDate"
-            android:text="JAN 01 2022"
+            android:hint="Select Date"
+            android:onClick="openDatePicker"
             android:textColor="@color/black"
             android:textSize="20dp" />
 
