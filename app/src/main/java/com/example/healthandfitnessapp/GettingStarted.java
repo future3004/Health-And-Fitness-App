@@ -34,6 +34,7 @@ public class GettingStarted extends AppCompatActivity {
     EditText currentWeightEntryChoice;
     EditText goalWeightEntryChoice;
     MaterialButton submitButtonGettingStartedPage;
+    String username = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +42,7 @@ public class GettingStarted extends AppCompatActivity {
         setContentView(R.layout.activity_getting_started);
 
         Intent intent = getIntent();
-        String username = intent.getStringExtra("username");
+        username = intent.getStringExtra("username");
 
         // set toolbar
         ActionBar actionBar = getSupportActionBar();
@@ -90,7 +91,6 @@ public class GettingStarted extends AppCompatActivity {
         String goalWeight = goalWeightEntryChoice.getText().toString();
         int goalWeightInt = Integer.parseInt(goalWeight);*/
 
-        openHomePage();
 
 /*        if(TextUtils.isEmpty(age)){
             ageEntryChoice.setError("age cannot be empty");
@@ -108,6 +108,7 @@ public class GettingStarted extends AppCompatActivity {
             openHomePage();
         }*/
 
+        openHomePage();
     }
 
     private String getTodaysDate(){
@@ -173,7 +174,7 @@ public class GettingStarted extends AppCompatActivity {
         return "JAN";
     }
 
-    public void openHomePage(){
+    private void openHomePage(){
         Intent intent = new Intent(GettingStarted.this, HomePage.class);
         startActivity(intent);
     }

@@ -63,11 +63,11 @@ public class CurrentDayActivity extends AppCompatActivity {
     private ArrayList<CurrentDayModel> breakfastItems;
     private MealListAdapter breakfastAdapter = null;
 
-    int breakFastCalories = 0;
-    int lunchCalories = 0;
-    int dinnerCalories = 0;
-    int exerciseCaloriesBurnt = 0;
-    int calorieGoal = 2500;
+    private int breakFastCalories = 0;
+    private int lunchCalories = 0;
+    private int dinnerCalories = 0;
+    private int exerciseCaloriesBurnt = 0;
+    private int calorieGoal = 2500;
 
     private FirebaseAuth auth = null;
     private static FirebaseUser user = null;
@@ -124,6 +124,9 @@ public class CurrentDayActivity extends AppCompatActivity {
         dinnerListInit();
         exerciseListInit();
 
+        // initialize the calories card method
+        caloriesCardInit();
+
 
         // on click listeners
         breakfastAddBtn.setOnClickListener(view -> {
@@ -164,9 +167,6 @@ public class CurrentDayActivity extends AppCompatActivity {
             exerciseAdapter.setList(dialog.newDialogList());
             exerciseAdapter.notifyDataSetChanged();
         });
-
-        // initialize the calories card method
-        caloriesCardInit();
 
     }
 
@@ -216,9 +216,6 @@ public class CurrentDayActivity extends AppCompatActivity {
     private void breakfastListInit() {
         // breakfast listView
         breakfastItems = new ArrayList<>();
-/*        breakfastItems.add(new CurrentDayModel("Coffee, w/ Skim milk", "8 fluid ounces",
-                100,
-                "https://rkmsite.s3.us-east-2.amazonaws.com/assets/breakfast.jpg"));*/
 
         // read data from firebase
         DatabaseReference mDatabase = firebaseDatabase.getReference();
@@ -238,7 +235,7 @@ public class CurrentDayActivity extends AppCompatActivity {
                                         CurrentDayModel meal = dataSnapshot.getValue(CurrentDayModel.class);
                                         String title = meal.getTitle();
                                         String extraInfo = meal.getExtraInfo();
-                                        int caloriesPlusMinus = meal.getCaloriesPlusMinus();
+                                        int caloriesPlusMinus = (Integer) meal.getCaloriesPlusMinus();
                                         String imageUrl = meal.getImageUrl();
 
                                         breakFastCalories = breakFastCalories + caloriesPlusMinus;
@@ -322,9 +319,10 @@ public class CurrentDayActivity extends AppCompatActivity {
             }
         });
         // calculate calories
-        for (CurrentDayModel i: lunchItems) {
-            lunchCalories += i.getCaloriesPlusMinus();
+        for(int i=0; i < lunchItems.size(); i++) {
+            lunchCalories = lunchCalories + lunchItems.get(i).getCaloriesPlusMinus();
         }
+
         lunchTxt.setText("Lunch: " + lunchCalories);
 
     }

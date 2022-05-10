@@ -10,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -22,6 +23,7 @@ public class HomePage extends AppCompatActivity {
     Button findGymsOrParksButton;
     Button remindersButton;
     Button findHealthyOptionsButton;
+    TextView userTxtView;
 
     private FirebaseAuth auth = null;
     private FirebaseUser user = null;
@@ -45,10 +47,14 @@ public class HomePage extends AppCompatActivity {
         findGymsOrParksButton = (Button) findViewById(R.id.findGymsOrParks);
         remindersButton = (Button) findViewById(R.id.reminders);
         findHealthyOptionsButton = (Button) findViewById(R.id.findHealthyOptions);
+        userTxtView = findViewById(R.id.homePageHeader);
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
+
+
+        userTxtView.setText("Hello, welcome");
 
 
         //LISTENERS FOR THE 7 BOTTOM BUTTONS ON HOME PAGE

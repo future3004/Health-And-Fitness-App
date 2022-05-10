@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Place Holder Home Page"
+        android:text=""
         android:textColor="@color/black"
         android:textSize="35dp"
         android:textStyle="bold" />
